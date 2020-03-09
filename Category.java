@@ -9,7 +9,7 @@ public class Category {
     private double totalAmountSpent;
     private String categoryName;
 
-    public void Category(String name, int budgetValue) {
+    public Category(String name, int budgetValue) {
         this.budget = budgetValue;
         this.categoryName = name;
     }
