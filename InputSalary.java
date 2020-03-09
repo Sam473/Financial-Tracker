@@ -61,6 +61,7 @@ public class InputSalary {
      */
     private void mainMenu() {
         Scanner scanner = new Scanner(System.in);
+        System.out.println("test");
             System.out.println("Please select an option by using the character in brackets:\n" +
                     "1. Add new income\n" +
                     "2. View all incomes\n" +
