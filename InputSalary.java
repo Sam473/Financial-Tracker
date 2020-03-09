@@ -3,7 +3,7 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class InputSalary {
-    private String[][] fileRequirements = {{"userName","defaultUser"},{"incomes","0"},{"directDebits",""},{"outgoings",""}};
+    private String[][] fileRequirements = {{"userName","defaultUser"},{"incomes","0"},{"outgoings",""}};
     File file = new File("user_data.properties");
     Properties properties = new Properties();
 
@@ -68,7 +68,9 @@ public class InputSalary {
                     "4. Add new regular payment (Monthly)\n" +
                     "5. Your total outgoings\n" +
                     "6. Your net monthly income\n" +
-                    "7. Exit budget planner");
+                    "7. Remove income\n" +
+                    "8. Remove outgoing\n" +
+                    "9. Exit budget planner");
             String input = scanner.nextLine();
             System.out.println(inputChecker(input));
     }
@@ -96,6 +98,14 @@ public class InputSalary {
             case "6":
                 return "Your net income every month will be:\n£" + netIncome();
             case "7":
+                System.out.println("Please enter the income you would like to remove (exactly as it appears)");
+                removeIncome();
+                return "Successfully removed income";
+            case "8":
+                System.out.println("Please enter the outgoing you would like to remove (exactly as it appears)");
+                removeOutgoing();
+                return "Successfully removed outgoing";
+            case "9":
                 return "Thank you for using the budget planner";
             default:
                 return "Not an option. Choose again";
@@ -160,6 +170,13 @@ public class InputSalary {
         String[] incomes = properties.getProperty("incomes").split(",");
         for (String income : incomes) {
             System.out.println(income);
+        }
+    }
+
+    private void viewOutgoings() {
+        String[] outcomes = properties.getProperty("outgoings").split(",");
+        for (String outcome : outcomes) {
+            System.out.println(outcome);
         }
     }
 
@@ -236,6 +253,27 @@ public class InputSalary {
         //add ",{amount}" to end of outgoings
     }
 
+    /**
+     * will remove an income from the properties folder
+     */
+    private void removeIncome() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Current Incomes");
+        viewIncomes();
+        String value = scanner.nextLine();
+        properties.setProperty("incomes",properties.getProperty("incomes").replaceAll(","+value,""));
+        saveProperties();
+    }
+    
+    private void removeOutgoing() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Current Outgoings");
+        viewOutgoings();
+        String value = scanner.nextLine();
+        properties.setProperty("outgoings",properties.getProperty("outgoings").replaceAll(","+value,""));
+        saveProperties();
+    }
+    
     public static void main(String[] args) {
          InputSalary inputSalary = new InputSalary();
          inputSalary.mainMenu();
