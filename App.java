@@ -100,7 +100,6 @@ public class App {
     /**
      * Main method
      * @param args cmd line args
-     * @throws IOException
      */
     public static void main(String[] args) {
         App myApp = new App();

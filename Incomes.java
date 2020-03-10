@@ -73,7 +73,7 @@ public class Incomes {
         return totalIncome;
     }
 
-    public void viewIncomes() {
+    private void viewIncomes() {
         String[] incomes = properties.getProperty("incomes").split(",");
         for (String income : incomes) {
             System.out.println(income);
@@ -85,7 +85,7 @@ public class Incomes {
      * Will add income stream to the properties file
      *
      */
-    public void addIncome() {
+    private void addIncome() {
         Scanner salaryScanner = new Scanner(System.in);
         float customPay;
         float monthlySalary = 0;

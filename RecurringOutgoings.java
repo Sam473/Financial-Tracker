@@ -1,8 +1,3 @@
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Properties;
 import java.util.Scanner;
 
 public class RecurringOutgoings {
@@ -83,7 +78,7 @@ public class RecurringOutgoings {
         }
     }
 
-    public void viewOutgoings() {
+    private void viewOutgoings() {
         String[] outcomes = properties.getProperty("outgoings").split(",");
         for (String outcome : outcomes) {
             System.out.println(outcome);
@@ -94,7 +89,7 @@ public class RecurringOutgoings {
     /**
      * will add an outgoing to the outgoings in properties file
      */
-    public void addOutgoing() {
+    private void addOutgoing() {
         Scanner scannerOutgoing = new Scanner(System.in);
         System.out.println("How much will you be paying per month?");
         properties.setProperty("outgoings",properties.getProperty("outgoings") + "," + scannerOutgoing.nextFloat());
