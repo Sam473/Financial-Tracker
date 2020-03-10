@@ -10,7 +10,8 @@ public class Category {
     private String categoryName;
 
     /*A new object of this class will be created for each
-    new category*/
+    new category
+    This constructor used for custom categories*/
     public Category(String name, int budgetValue) {
         this.budget = budgetValue;
         this.categoryName = name;

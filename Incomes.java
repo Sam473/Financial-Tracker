@@ -1,60 +1,11 @@
-import java.io.*;
-import java.util.Properties;
 import java.util.Scanner;
 
 public class Incomes {
-    private String[][] fileRequirements = {{"userName","defaultUser"},{"incomes","0"},{"outgoings",""}};
-    File file = new File("user_data.properties");
-    Properties properties = new Properties();
+    private final PropertiesSetup properties;
     private boolean running;
 
-    public Incomes() {
-        openNewFile();
-    }
-
-    /**
-     * used to load a file into properties object
-     *
-     */
-    private void openNewFile() {
-        try {
-            if (file.createNewFile()) {
-                System.out.println("Created new file");
-            } else {
-                System.out.println("File already exists...");
-            }
-            properties.load(new FileInputStream(file)); //load the user_data.properties
-            checkFileFormat();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * will check all the required keys are in properties file. If not, will create it
-     *
-     */
-    private void checkFileFormat() {
-        for (String[] key : fileRequirements){
-            if (properties.getProperty(key[0]) == null) {
-                properties.setProperty(key[0], key[1]);
-            }
-        }
-        saveProperties();
-    }
-
-    /**
-     * saves changes to the file so other applications can see it
-     *
-     */
-    private void saveProperties() {
-        try {
-            FileOutputStream fr = new FileOutputStream(file);
-            properties.store(fr, "Properties");
-            fr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Incomes(PropertiesSetup properties) {
+        this.properties = properties;
     }
 
     /**
@@ -115,15 +66,14 @@ public class Incomes {
                 totalIncome += Float.parseFloat(income);
             } catch (NumberFormatException e){
                 System.out.println("Error: not a float or integer");
-                properties.setProperty("incomes",properties.getProperty("incomes").replaceAll(","+income, ""));
+                properties.setProperty("incomes", properties.getProperty("incomes").replaceAll(","+income, ""));
                 //will remove the faulty value from the incomes list
-                saveProperties();
             }
         }
         return totalIncome;
     }
 
-    private void viewIncomes() {
+    public void viewIncomes() {
         String[] incomes = properties.getProperty("incomes").split(",");
         for (String income : incomes) {
             System.out.println(income);
@@ -135,7 +85,7 @@ public class Incomes {
      * Will add income stream to the properties file
      *
      */
-    private void addIncome() {
+    public void addIncome() {
         Scanner salaryScanner = new Scanner(System.in);
         float customPay;
         float monthlySalary = 0;
@@ -188,9 +138,9 @@ public class Incomes {
             }
         }
 
-        properties.setProperty("incomes", properties.getProperty("incomes") + "," + monthlySalary);
+        String value = (properties.getProperty("incomes").equals("")) ? Float.toString(monthlySalary) : "," + monthlySalary;
+        properties.setProperty("incomes", properties.getProperty("incomes") + value);
         //add ",{amount}" to end of incomes
-        saveProperties();
     }
 
     /**
@@ -202,11 +152,5 @@ public class Incomes {
         viewIncomes();
         String value = scanner.nextLine();
         properties.setProperty("incomes",properties.getProperty("incomes").replaceAll(","+value,""));
-        saveProperties();
-    }
-    
-    public static void main(String[] args) {
-         Incomes incomes = new Incomes();
-         incomes.mainMenu();
     }
 }

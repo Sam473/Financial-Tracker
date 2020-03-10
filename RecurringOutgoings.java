@@ -6,59 +6,11 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class RecurringOutgoings {
-    private String[][] fileRequirements = {{"userName","defaultUser"},{"incomes","0"},{"outgoings",""}};
-    File file = new File("user_data.properties");
-    Properties properties = new Properties();
+    private final PropertiesSetup properties;
     private boolean running;
 
-    public RecurringOutgoings() {
-        openNewFile();
-    }
-
-    /**
-     * used to load a file into properties object
-     *
-     */
-    private void openNewFile() {
-        try {
-            if (file.createNewFile()) {
-                System.out.println("Created new file");
-            } else {
-                System.out.println("File already exists...");
-            }
-            properties.load(new FileInputStream(file)); //load the user_data.properties
-            checkFileFormat();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * will check all the required keys are in properties file. If not, will create it
-     *
-     */
-    private void checkFileFormat() {
-        for (String[] key : fileRequirements){
-            if (properties.getProperty(key[0]) == null) {
-                properties.setProperty(key[0], key[1]);
-            }
-        }
-        saveProperties();
-    }
-
-
-    /**
-     * saves changes to the file so other applications can see it
-     *
-     */
-    private void saveProperties() {
-        try {
-            FileOutputStream fr = new FileOutputStream(file);
-            properties.store(fr, "Properties");
-            fr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public RecurringOutgoings(PropertiesSetup propertiesSetup) {
+        this.properties = propertiesSetup;
     }
 
     /**
@@ -123,7 +75,6 @@ public class RecurringOutgoings {
                     System.out.println("Error: " + outgoing + " not a float or integer");
                     properties.setProperty("outgoings",properties.getProperty("outgoings").replaceAll(","+outgoing,""));
                     //will remove the faulty value from the outgoings list
-                    saveProperties();
                 }
             }
             return totalOutgoings;
@@ -132,7 +83,7 @@ public class RecurringOutgoings {
         }
     }
 
-    private void viewOutgoings() {
+    public void viewOutgoings() {
         String[] outcomes = properties.getProperty("outgoings").split(",");
         for (String outcome : outcomes) {
             System.out.println(outcome);
@@ -143,7 +94,7 @@ public class RecurringOutgoings {
     /**
      * will add an outgoing to the outgoings in properties file
      */
-    private void addOutgoing() {
+    public void addOutgoing() {
         Scanner scannerOutgoing = new Scanner(System.in);
         System.out.println("How much will you be paying per month?");
         properties.setProperty("outgoings",properties.getProperty("outgoings") + "," + scannerOutgoing.nextFloat());
@@ -156,11 +107,5 @@ public class RecurringOutgoings {
         viewOutgoings();
         String value = scanner.nextLine();
         properties.setProperty("outgoings",properties.getProperty("outgoings").replaceAll(","+value,""));
-        saveProperties();
-    }
-
-    public static void main(String[] args) {
-        RecurringOutgoings recurringOutgoings = new RecurringOutgoings();
-        recurringOutgoings.mainMenu();
     }
 }

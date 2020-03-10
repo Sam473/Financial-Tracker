@@ -25,7 +25,7 @@ public class Entry {
      */
     public Entry(App mainClass){
         // check this on Monday when debugging or with mainClass
-        existentCategories = mainClass.getCategories();
+        existentCategories = mainClass.getExistentCategories();
         try{
             userIn = new BufferedReader(new InputStreamReader(System.in));
             System.out.println(INVALID_MESSAGE);

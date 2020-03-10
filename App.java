@@ -10,16 +10,74 @@ public class App {
 
     // declare fields
     ArrayList<Category>existentCategories;
+    Incomes userIncomes;
+    RecurringOutgoings userRecOutgoings;
+    PropertiesSetup properties;
     BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
+    private boolean running;
 
     /**
      * Constructor -- creates preset Categories and adds them
      */
     public App(){
         existentCategories = new ArrayList<>();
-        existentCategories.add(new Category("Clothes"));
-        existentCategories.add(new Category("Transport"));
-        existentCategories.add(new Category("Groceries"));
+        properties = new PropertiesSetup();
+        userIncomes = new Incomes(properties);
+        userRecOutgoings = new RecurringOutgoings(properties);
+        running = true;
+
+//        existentCategories.add(new Category("Clothes"));
+//        existentCategories.add(new Category("Transport"));
+//        existentCategories.add(new Category("Groceries"));
+    }
+
+
+
+
+    private void mainMenu() {
+        while (running) {
+            try {
+                System.out.println(printMainMenu());
+                System.out.println("Going to: ");
+                handleMainMenuInput(userIn.readLine());
+        } catch (IOException e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+    }
+
+    private String printMainMenu(){
+        return "1. Manage purchases\n" +
+                "2. Manage categories\n" +
+                "3. Manage incomes\n" +
+                "4. Manage recurring outgoings\n" +
+                "5. Exit";
+    }
+
+    private void handleMainMenuInput(String input) {
+        switch (input) {
+            case "1":
+                System.out.println("WIP\n\n");
+                break;
+            case "2":
+                System.out.println("WIP\n\n");
+                break;
+            case "3":
+                System.out.println("Incomes\n\n");
+                userIncomes.mainMenu();
+                break;
+            case "4":
+                System.out.println("Recurring Outgoings\n\n");
+                userRecOutgoings.mainMenu();
+                break;
+            case "5":
+                System.out.println("Thank you for using the financial budget app");
+                running = false;
+                break;
+            default:
+                System.out.println("Not an option, try again");
+        }
     }
 
     /**
@@ -36,7 +94,7 @@ public class App {
      */
     private void addCategory(String categoryName){
         // doesn't check if existent yet
-        existentCategories.add(new Category(categoryName));
+        //existentCategories.add(new Category(categoryName));
     }
 
     /**
@@ -44,18 +102,9 @@ public class App {
      * @param args cmd line args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         App myApp = new App();
-        while(true){
-            System.out.println("Press 1 to enter a new Entry or 0 to exit");
-            int value = Integer.parseInt(myApp.userIn.readLine());
-            if(value == 0){
-                System.exit(0);
-            }
-            if(value == 1){
-                new Entry(myApp);
-            }
-        }
+        myApp.mainMenu();
     }
 
 }
