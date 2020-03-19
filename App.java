@@ -56,8 +56,8 @@ public class App {
                 "3. Manage incomes\n" +
                 "4. Manage recurring outgoings\n" +
                 "5. Manage budget\n" +
-                "6. Exit\n";
-              	"7. Request data";
+              	"6. Request data\n"; +
+                "7. Exit";
     }
 
     private void handleMainMenuInput(String input) {
@@ -80,14 +80,14 @@ public class App {
                 System.out.println("Budgets");
                 userBudget.mainMenu();
                 break;
-            case "6":
+          case "6":
+            	RequestData data = new RequestData(properties);
+                data.saveDataToDesktop();
+                break;
+            case "7":
             	System.out.println("Thank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
-                break;
-          case "7":
-            RequestData data = new RequestData(properties);
-                data.saveDataToDesktop();
                 break;
             default:
                 System.out.println("Not an option, try again");
