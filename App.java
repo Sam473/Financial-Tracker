@@ -84,6 +84,10 @@ public class App {
                 running = false;
                 RetrieveAndStore.closeDBConnection();
                 break;
+          case "7":
+            RequestData data = new RequestData(properties);
+                data.saveDataToDesktop();
+                break;
             default:
                 System.out.println("Not an option, try again");
         }
