@@ -12,7 +12,7 @@ public class BudgetTime {
 	//Buffered reader declared to take user input within this class
 	private BufferedReader userIn;
 
-	 //constructor used to initialise reding from client
+	 //constructor used to initialise reading from client
 	public BudgetTime() {
 		userIn = new BufferedReader(new InputStreamReader(System.in));
 	}
@@ -36,6 +36,10 @@ public class BudgetTime {
 			return;
 		}
 		budgetAmount = Integer.parseInt(input);
+		
+		RetrieveAndStore.startDBConnection();
+		RetrieveAndStore.writeToFile("INSERT INTO tblBudget VALUES (1, " + budgetAmount + ", " + numberOfDays + ")");
+		//Write SQL statement here then pass to method
 
 		System.out.println("Success a budget has been set for 'amount' every 'numberofdays' days!");
 		//CALL CLASS TO STORE IN A TEXT DOC OR DB
