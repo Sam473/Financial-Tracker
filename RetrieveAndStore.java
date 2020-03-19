@@ -56,5 +56,22 @@ public class RetrieveAndStore {
 			e.printStackTrace();
 		}
 	}
+	
+	//For range validation of inputs
+	public static int maxID (String table ,String columnName) {
+		int max = 0;
+		try {
+			ResultSet rs =  s.executeQuery("SELECT " + columnName + " FROM " + table);
+			while (rs.next()) {
+				if (rs.getInt(columnName) > max) {
+					max = rs.getInt(columnName);
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return max;
+	}
 
 }

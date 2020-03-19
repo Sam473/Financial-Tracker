@@ -67,7 +67,12 @@ public class BudgetTime {
 		printBudgets(); //Print all budgets to the console
 		System.out.println("Please enter a record number to delete");
 		String input = userIn.readLine();
-		//RANGE CHECK THIS INPUT
+		if (!Validation.isInteger(input)) {
+			return;
+		}
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblBudget", "BudgetID"), Integer.parseInt(input))) {
+			return;
+		}
 		RetrieveAndStore.writeToFile("DELETE FROM tblBudget WHERE BudgetID = '" + input + "'");
 		System.out.format("Record %s deleted successfully\n", input); //Tell the user record has been removed		
 	}
@@ -76,13 +81,24 @@ public class BudgetTime {
 	private void amendBudget() throws IOException {
 		printBudgets(); //Print all budgets to the console
 		System.out.println("Please enter a record number to amend");
-		int recordNumber = Integer.parseInt(userIn.readLine());
-		System.out.println("Would you like to change:\n 1.budget\n 2.timeframe?");
 		String input = userIn.readLine();
+		if (!Validation.isInteger(input)) {
+			return;
+		}
+		int recordNumber = Integer.parseInt(input);
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblBudget", "BudgetID"), recordNumber)) {
+			return;
+		}
+		System.out.println("Would you like to change:\n 1.budget\n 2.timeframe?");
+		input = userIn.readLine();
 		switch (input) {
 		case "1":
 			System.out.println("Please enter an amount (£)");
-			int amount = Integer.parseInt(userIn.readLine());
+			input = userIn.readLine();
+			if (!Validation.isInteger(input)) {
+				return;
+			}
+			int amount = Integer.parseInt(input);
 			RetrieveAndStore.writeToFile("UPDATE tblBudget SET BudgetAmount = " + amount + " WHERE BudgetID = " + recordNumber);
 			break;
 		case "2":
