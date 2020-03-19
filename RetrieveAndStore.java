@@ -11,6 +11,7 @@ public class RetrieveAndStore {
 	private static Connection conn;
 	private static Statement s;
 
+	//called at start from main
 	public static void startDBConnection() {
 		try {
 			String database = "jdbc:ucanaccess://"+ System.getProperty("user.dir") + "/ProgramDB.mdb";
@@ -20,15 +21,11 @@ public class RetrieveAndStore {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
-		//command.close();  // Close the statement
-		//conn.close(); // Close the database. Its no more required
 	}
 
 	public static void writeToFile(String sqlString) {
 		try {
 			s.execute(sqlString);
-			s.close();
-			conn.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,12 +33,19 @@ public class RetrieveAndStore {
 		//Read file to decide a record number
 	}
 
-	public void readFromFile(String fileName, int index, int numOFLines) { 
-		
+	public static void readAllRecords(String fileName, int index, int numOFLines) { 
+		//Read all records from the database
 	}
-
-	private int numOfLines() { //To figure out ID
-		return 0;
+	
+	//Called at exit from main
+	public static void closeDBConnection () {
+		try {
+			s.close(); //Close the statement
+			conn.close(); //Close the database
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

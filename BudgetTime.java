@@ -38,12 +38,15 @@ public class BudgetTime {
 		budgetAmount = Integer.parseInt(input);
 		
 		RetrieveAndStore.startDBConnection();
-		RetrieveAndStore.writeToFile("INSERT INTO tblBudget VALUES (1, " + budgetAmount + ", " + numberOfDays + ")");
+		RetrieveAndStore.writeToFile("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES (" + budgetAmount + ", " + numberOfDays + ")");
 		//Write SQL statement here then pass to method
 
-		System.out.println("Success a budget has been set for 'amount' every 'numberofdays' days!");
-		//CALL CLASS TO STORE IN A TEXT DOC OR DB
-		//ALLOW AMENDMENTS AND DELETIONS OF CURRENT BUDGETS ONCE DB IS READY
+		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays + " days!");
+	}
+	
+	private void deleteBudget() {
+		//To delete just print the whole DB and ask them which one to delete
+		//For amend choose the record in the same way
 	}
 
 	/**
@@ -86,6 +89,12 @@ public class BudgetTime {
 		}
 		return 0;
 	}
+	
+		public void chooseOperation() {
+			//Choose to delete amend or add records 
+			//Catch all issues by surrounfing whole select statement in a catch
+			//This is what is called from the main
+		}
 
 	public static void main(String[] args) {
 		try {
