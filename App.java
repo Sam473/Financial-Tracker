@@ -57,6 +57,7 @@ public class App {
                 "4. Manage recurring outgoings\n" +
                 "5. Manage budget\n" +
                 "6. Exit";
+              7. Request data
     }
 
     private void handleMainMenuInput(String input) {
