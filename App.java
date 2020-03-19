@@ -72,6 +72,10 @@ public class App {
                 userRecOutgoings.mainMenu();
                 break;
             case "5":
+                RequestData data = new RequestData(properties);
+                data.saveDataToDesktop();
+                break;
+            case "6":
                 System.out.println("Thank you for using the financial budget app");
                 running = false;
                 break;

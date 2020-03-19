@@ -68,4 +68,8 @@ public class PropertiesSetup {
         properties.setProperty(key, value);
         saveProperties();
     }
+
+    public String[][] getFileRequirements(){
+        return fileRequirements;
+    }
 }
