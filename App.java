@@ -56,8 +56,8 @@ public class App {
                 "3. Manage incomes\n" +
                 "4. Manage recurring outgoings\n" +
                 "5. Manage budget\n" +
-                "6. Exit";
-              7. Request data
+                "6. Exit\n";
+              	"7. Request data";
     }
 
     private void handleMainMenuInput(String input) {
