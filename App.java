@@ -13,9 +13,10 @@ public class App {
     Incomes userIncomes;
     RecurringOutgoings userRecOutgoings;
     PropertiesSetup properties;
+    BudgetTime userBudget;
     BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
     private boolean running;
-
+    
     /**
      * Constructor -- creates preset Categories and adds them
      */
@@ -24,7 +25,9 @@ public class App {
         properties = new PropertiesSetup();
         userIncomes = new Incomes(properties);
         userRecOutgoings = new RecurringOutgoings(properties);
+        userBudget = new BudgetTime();
         running = true;
+		RetrieveAndStore.startDBConnection();
 
 //        existentCategories.add(new Category("Clothes"));
 //        existentCategories.add(new Category("Transport"));
@@ -52,7 +55,9 @@ public class App {
                 "2. Manage categories\n" +
                 "3. Manage incomes\n" +
                 "4. Manage recurring outgoings\n" +
-                "5. Exit";
+                "5. Manage budget\n" +
+              	"6. Request data\n"; +
+                "7. Exit";
     }
 
     private void handleMainMenuInput(String input) {
@@ -72,12 +77,17 @@ public class App {
                 userRecOutgoings.mainMenu();
                 break;
             case "5":
-                RequestData data = new RequestData(properties);
+                System.out.println("Budgets");
+                userBudget.mainMenu();
+                break;
+          case "6":
+            	RequestData data = new RequestData(properties);
                 data.saveDataToDesktop();
                 break;
-            case "6":
-                System.out.println("Thank you for using the financial budget app");
+            case "7":
+            	System.out.println("Thank you for using the financial budget app");
                 running = false;
+                RetrieveAndStore.closeDBConnection();
                 break;
             default:
                 System.out.println("Not an option, try again");
