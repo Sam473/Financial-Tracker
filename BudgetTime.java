@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Class to take Budget input and store it
@@ -12,7 +14,7 @@ public class BudgetTime {
 	//Buffered reader declared to take user input within this class
 	private BufferedReader userIn;
 
-	 //constructor used to initialise reading from client
+	//constructor used to initialise reading from client
 	public BudgetTime() {
 		userIn = new BufferedReader(new InputStreamReader(System.in));
 	}
@@ -22,7 +24,7 @@ public class BudgetTime {
 	 * @throws IOException
 	 * 		Handled in main along with other IO exceptions to reduce error handling code
 	 */
-	private void setBudgetForTimePeriod() throws IOException {
+	private void addBudget() throws IOException {
 		int numberOfDays = 	timeInput(); //Gets time input from user and converts to days
 		if (numberOfDays == 0) {
 			return; //Quit if time input failed
@@ -30,23 +32,66 @@ public class BudgetTime {
 		int budgetAmount = 0; //Variable to hold the budget before it is stored
 		String input;
 
-		System.out.println("Please enter a budget for the selected time period");
+		System.out.println("Please enter a budget (£) for the selected time period");
 		input = userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return;
 		}
 		budgetAmount = Integer.parseInt(input);
-		
-		RetrieveAndStore.startDBConnection();
+
 		RetrieveAndStore.writeToFile("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES (" + budgetAmount + ", " + numberOfDays + ")");
 		//Write SQL statement here then pass to method
-
 		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays + " days!");
 	}
-	
-	private void deleteBudget() {
-		//To delete just print the whole DB and ask them which one to delete
-		//For amend choose the record in the same way
+
+	//Function to print all budgets...
+	private void printBudgets() {
+		ResultSet rs = RetrieveAndStore.readAllRecords("tblBudget");
+		try {
+			while (rs.next())
+			{
+				int id = rs.getInt("BudgetID");
+				int budget = rs.getInt("BudgetAmount");
+				int days = rs.getInt("NumberOfDays");
+
+				// print the results
+				System.out.format("%s. Budget amount = £%s, Number of days = %s\n", id, budget, days);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void deleteBudget() throws IOException {
+		printBudgets(); //Print all budgets to the console
+		System.out.println("Please enter a record number to delete");
+		String input = userIn.readLine();
+		//RANGE CHECK THIS INPUT
+		RetrieveAndStore.writeToFile("DELETE FROM tblBudget WHERE BudgetID = '" + input + "'");
+		System.out.format("Record %s deleted successfully\n", input); //Tell the user record has been removed		
+	}
+
+	//Method for amending the budget... JAVADOC THIS
+	private void amendBudget() throws IOException {
+		printBudgets(); //Print all budgets to the console
+		System.out.println("Please enter a record number to amend");
+		int recordNumber = Integer.parseInt(userIn.readLine());
+		System.out.println("Would you like to change:\n 1.budget\n 2.timeframe?");
+		String input = userIn.readLine();
+		switch (input) {
+		case "1":
+			System.out.println("Please enter an amount (£)");
+			int amount = Integer.parseInt(userIn.readLine());
+			RetrieveAndStore.writeToFile("UPDATE tblBudget SET BudgetAmount = " + amount + " WHERE BudgetID = " + recordNumber);
+			break;
+		case "2":
+			int days = timeInput();
+			RetrieveAndStore.writeToFile("UPDATE tblBudget SET NumberOfDays = " + days + "' WHERE BudgetID = " + recordNumber);
+			break;
+		default:
+			System.out.println("Not an option, try again");
+		}
 	}
 
 	/**
@@ -89,19 +134,34 @@ public class BudgetTime {
 		}
 		return 0;
 	}
-	
-		public void chooseOperation() {
-			//Choose to delete amend or add records 
-			//Catch all issues by surrounfing whole select statement in a catch
-			//This is what is called from the main
-		}
 
-	public static void main(String[] args) {
+	//logic of this class, called from main to choose what to do with budgets
+	public void mainMenu() {
 		try {
-			new BudgetTime().setBudgetForTimePeriod();
+			System.out.println("Would you like to:\n 1.Add a budget\n 2.Remove a budget\n 3.Amend a budget\n 4. View all budgets");
+			String input = userIn.readLine();
+
+			switch(input) {
+			case "1":
+				addBudget();
+				break;
+			case "2":
+				deleteBudget();
+				break;
+			case "3":
+				amendBudget();
+				break;
+			case "4":
+				printBudgets();
+				break;
+			default:
+				System.out.println("Not an option, try again");
+			}
+
 		}  catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Unable to take input from console");
 		}
 	}
+
 }

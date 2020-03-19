@@ -33,10 +33,19 @@ public class RetrieveAndStore {
 		//Read file to decide a record number
 	}
 
-	public static void readAllRecords(String fileName, int index, int numOFLines) { 
+	public static ResultSet readAllRecords(String table) { 
 		//Read all records from the database
+		ResultSet rs = null;
+		try {
+			rs = s.executeQuery("SELECT * FROM "+ table);
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return rs;
 	}
-	
+
 	//Called at exit from main
 	public static void closeDBConnection () {
 		try {
