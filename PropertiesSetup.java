@@ -6,7 +6,10 @@ import java.util.Properties;
 
 public class PropertiesSetup {
 
-    private String[][] fileRequirements = {{"userName","defaultUser"},{"incomes","0"},{"outgoings",""}};
+    // for the categories the format is : name-budget-expenditure
+    private String[][] fileRequirements = {{"userName","defaultUser"},{"incomes","0"},
+            {"purchases", "0"},{"categories", "0,Unknown-0.0-0.0,Clothes-0.0-0.0" +
+            ",Groceries-0.0-0.0,Transport-0.0-0.0",},{"outgoings",""}};
     File file = new File("user_data.properties");
     Properties properties = new Properties();
 
