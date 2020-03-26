@@ -16,28 +16,32 @@ public class Incomes {
     /**
      * will ask for which option on
      */
-    public void mainMenu() {
-        running = true;
-        while (running) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.println("Please select an option by using the character in brackets:\n" +
-                    "1. Add new income\n" +
-                    "2. View all incomes\n" +
-                    "3. View total monthly income\n" +
-                    "4. Remove income\n" +
-                    "5. Return to main menu");
-            String input = scanner.nextLine();
-            System.out.println(inputChecker(input));
-        }
+    public void mainMenu(){
+    	running = true;
+    	while (running) {
+    		System.out.println("Please select an option by using the character in brackets:\n" +
+    				"1. Add new income\n" +
+    				"2. View all incomes\n" +
+    				"3. View total monthly income\n" +
+    				"4. Remove income\n" +
+    				"5. Return to main menu");
+    		try {
+    			String input = userIn.readLine();
+    			System.out.println(inputChecker(input));
+    		} catch(IOException e) {
+    			e.printStackTrace(); 
+    			System.out.println("Unable to take input from console");
+    		}
+    	}
     }
 
     /**
      * takes input from main menu and calls correct method
      * @param input their choice from main menu options
      * @return Success/failure message
+     * @throws IOException
      */
-    private String inputChecker(String input) {
-    	try {
+    private String inputChecker(String input) throws IOException {
     		switch (input) {
     		case "1":
     			addIncome();
@@ -59,11 +63,6 @@ public class Incomes {
     			return "Not an option. Choose again";
 
     		}
-    	} catch(IOException e) {
-    		e.printStackTrace(); 
-    		System.out.println("Unable to take input from console");
-    	}
-		return "";
     }
 
     /**
@@ -165,7 +164,7 @@ public class Incomes {
         }
         
         //Add the record to the database
-		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (MonthlySalary) VALUES (" + monthlySalary + ")");
+		RetrieveAndStore.sqlExecute("INSERT INTO tblIncomes (MonthlySalary) VALUES (" + monthlySalary + ")");
     }
 
     /**

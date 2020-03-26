@@ -192,8 +192,6 @@ public class BudgetTime {
 					System.out.println("Not an option, try again");
 				}
 			}
-			userIn.close(); //Debug this...
-			
 
 		}  catch (IOException e) { //Catches exceptions with reading console inputs
 			e.printStackTrace();
