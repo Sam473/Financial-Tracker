@@ -24,7 +24,7 @@ public class App {
     public App(){
         existentCategories = new ArrayList<>();
         properties = new PropertiesSetup();
-        userIncomes = new Incomes(properties);
+        userIncomes = new Incomes();
         userRecOutgoings = new RecurringOutgoings(properties);
         userBudget = new BudgetTime();
         userEntries = new UserEntries(properties, this);

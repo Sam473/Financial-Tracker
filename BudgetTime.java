@@ -168,25 +168,32 @@ public class BudgetTime {
 	 */
 	public void mainMenu() {
 		try {
-			System.out.println("Would you like to:\n 1.Add a budget\n 2.Remove a budget\n 3.Amend a budget\n 4. View all budgets");
-			String input = userIn.readLine();
+			boolean loop = true;
+			while(loop) {
+				System.out.println("Would you like to:\n 1. Add a budget\n 2. Remove a budget\n 3. Amend a budget\n 4. View all budgets\n 5. Quit to main menu");
+				String input = userIn.readLine();
 
-			switch(input) { //Use user input to decide which action to complete
-			case "1":
-				addBudget();
-				break;
-			case "2":
-				deleteBudget();
-				break;
-			case "3":
-				amendBudget();
-				break;
-			case "4":
-				printBudgets();
-				break;
-			default: //Filter out invalid inputs
-				System.out.println("Not an option, try again");
+				switch(input) { //Use user input to decide which action to complete
+				case "1":
+					addBudget();
+					break;
+				case "2":
+					deleteBudget();
+					break;
+				case "3":
+					amendBudget();
+					break;
+				case "4":
+					printBudgets();
+					break;
+				case "5":
+					loop = false;
+				default: //Filter out invalid inputs
+					System.out.println("Not an option, try again");
+				}
 			}
+			userIn.close(); //Debug this...
+			
 
 		}  catch (IOException e) { //Catches exceptions with reading console inputs
 			e.printStackTrace();
