@@ -13,8 +13,9 @@ public class Entry {
     private ArrayList<Category> existentCategories;
     // in case user inputs an invalid amount
     private static final String INVALID_MESSAGE = "Please enter a positive amount, with maximum 2 decimals.";
-    private Date date; // using our Data class
+    private validDate date; // using our Data class
     private Scanner userIn;
+    private int guiltyLevel;
 
 
     /**
@@ -26,6 +27,7 @@ public class Entry {
         selectAmount();
         selectCategory();
         selectDate();
+        selectGuiltyLevel();
     }
 
     /**
@@ -96,7 +98,16 @@ public class Entry {
      * Select a date when the purchase was made
      */
     public void selectDate(){
-        this.date = new Date();
+
+        this.date = new validDate();
+    }
+
+    /**
+     * Lets the user input a guilty level based on his purchase:
+     */
+    public void selectGuiltyLevel(){
+        System.out.println("Finally, please enter how guilty you feel about this purchase, on a scale from 1 to 10:");
+        this.guiltyLevel = userIn.nextInt();
     }
 
     /**
@@ -119,7 +130,15 @@ public class Entry {
      * Return the date of the purchase
      * @return date of purchase
      */
-    public Date getDate() {
-        return date;
+    public String getDate() {
+        return date.getDate();
+    }
+
+    /**
+     * Return the guilt value of the purchase
+     * @return String in format Guilt level: value
+     */
+    public String getGuilt(){
+        return "Guilt level-" + (guiltyLevel);
     }
 }
