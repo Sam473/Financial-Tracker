@@ -49,7 +49,8 @@ public class validDate{
     }
 
     /**
-     * Mwthod which gets passed a month as a String and returns the number of the month
+     * Method which gets passed a month as a String and returns the number of the month
+
      * @param month String for month EX: Jan for January
      * @return String representing number ex "01" for January
      */
