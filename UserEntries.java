@@ -72,16 +72,18 @@ public class UserEntries {
         // add purchase to file
         Entry newPurchase = new Entry(mainClass);
         String purchase = newPurchase.getAmount() + " " + newPurchase.getCategory().returnName() +
-                 " " +newPurchase.getDate().getDate();
+                 " " +newPurchase.getDate() + " " + newPurchase.getGuilt();
         String value = (properties.getProperty("purchases").equals("")) ? purchase : "," + purchase;
         properties.setProperty("purchases", properties.getProperty("purchases") + value);
         // add expenditure to the category
         // make use of format name-budget-expenditure
         Category category = newPurchase.getCategory();
+        System.out.println(category.returnName() + "-" + category.getBudget() +
+                "-" + (newPurchase.getAmount() + category.getTotalAmountSpent()));
         properties.setProperty("categories", properties.getProperty("categories").
                 replaceAll(category.returnName() + "-" + category.getBudget() + "-" +
-                        category.getTotalAmountSpent(), category.returnName() + "-" + category.getBudget()) +
-                "-" + newPurchase.getAmount());
+                        category.getTotalAmountSpent(), category.returnName() + "-" + category.getBudget() +
+                "-" + (newPurchase.getAmount() + category.getTotalAmountSpent())));
         newPurchase.getCategory().addExpenditure(newPurchase.getAmount());
     }
 
