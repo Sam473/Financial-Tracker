@@ -113,7 +113,14 @@ public class validDate{
         Date currentDate = new Date();
         return date.after(currentDate);
     }
-
+    /**
+    * Method checks if date is after a different specified date.
+    * This method will be used if they want to set up a budget starting and finishing at two different dates in the future
+    *
+    */
+    private boolean futureDateCustom(Date customDate){
+        return date.after(customDate);
+    }
     /**
      * Method accepts input, creates a date object and makes it valid only if it is in the future
      * Good for the future.
