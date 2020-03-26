@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -105,9 +106,18 @@ public class Entry {
     /**
      * Lets the user input a guilty level based on his purchase:
      */
-    public void selectGuiltyLevel(){
+    public void selectGuiltyLevel() {
         System.out.println("Finally, please enter how guilty you feel about this purchase, on a scale from 1 to 10:");
-        this.guiltyLevel = userIn.nextInt();
+        while(true) {
+            try {
+                this.guiltyLevel = userIn.nextInt();
+                if(this.guiltyLevel <= 10 && this.guiltyLevel >= 1){
+                    return;
+                }
+            } catch(InputMismatchException e){
+                System.out.println("Invalid, please try again");
+            }
+        }
     }
 
     /**
