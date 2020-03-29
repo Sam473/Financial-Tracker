@@ -1,8 +1,8 @@
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Scanner;
 
 /**
  * Class which creates a Date (java.util) object
@@ -16,16 +16,18 @@ public class validDate{
     /**
      * Let the user create a date object in the right format (don't check yet for future or past
      * and return the valid date.
+     * @throws IOException 
      */
-    public validDate(){
+    public validDate() throws IOException{
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
         assignDate();
     }
 
     /**
      * Let the user input until a valid date is given.
+     * @throws IOException 
      */
-    private void assignDate(){
+    private void assignDate() throws IOException{
         while(true){
             String userInput = enterDate();
             if(validFormat(userInput)){
@@ -76,10 +78,10 @@ public class validDate{
     /**
      * Accept input from the user
      * @return String inputted by the user
+     * @throws IOException 
      */
-    private String enterDate(){
-        Scanner myObj = new Scanner(System.in);
-        return myObj.nextLine();
+    private String enterDate() throws IOException{
+        return App.userIn.readLine();
     }
 
     /**
@@ -125,8 +127,9 @@ public class validDate{
      * Method accepts input, creates a date object and makes it valid only if it is in the future
      * Good for the future.
      * @return Date object when valid
+     * @throws IOException 
      */
-    private Date checkDate(){
+    private Date checkDate() throws IOException{
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
         while(true){
             String userInput = enterDate();
@@ -148,7 +151,11 @@ public class validDate{
      * @param args cmd arguments
      */
     public static void main(String[] args) {
-        validDate valid = new validDate();
+        try {
+			validDate valid = new validDate();
+		} catch (IOException e) { //not sure why there is a main method here?
+			e.printStackTrace();
+		}
         //valid.checkDate();
     }
 }

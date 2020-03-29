@@ -1,17 +1,9 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Scanner;
 
 public class Incomes {
     private boolean running;
-    private BufferedReader userIn;
-
-    public Incomes() {
-    	userIn = new BufferedReader(new InputStreamReader(System.in));
-    }
     
     /**
      * will ask for which option on
@@ -26,7 +18,7 @@ public class Incomes {
     				"4. Remove income\n" +
     				"5. Return to main menu");
     		try {
-    			String input = userIn.readLine();
+    			String input = App.userIn.readLine();
     			System.out.println(inputChecker(input));
     		} catch(IOException e) {
     			e.printStackTrace(); 
@@ -121,45 +113,45 @@ public class Incomes {
                 "(W)eekly\n" +
                 "(M)onthly\n" +
                 "(Y)early");
-        String frequency = userIn.readLine(); //take input from console
+        String frequency = App.userIn.readLine(); //take input from console
         while(!validInput) {
             validInput=true;
             switch (frequency) {
                 case "h":
                 case "H": //if input is hour
                     System.out.println("How many hours a week?");
-                    int hoursPerWeek = Integer.parseInt(userIn.readLine());
+                    int hoursPerWeek = Integer.parseInt(App.userIn.readLine());
                     System.out.println("How much do you get per hour?");
-                    customPay = Float.parseFloat(userIn.readLine());
+                    customPay = Float.parseFloat(App.userIn.readLine());
                     monthlySalary = (customPay*hoursPerWeek*52)/12; //work out hours worked per week then convert to monthly
                     break;
                 case "d":
                 case "D":
                     System.out.println("How much do you get per day?");
-                    customPay = Float.parseFloat(userIn.readLine());
+                    customPay = Float.parseFloat(App.userIn.readLine());
                     monthlySalary = (customPay*5*52)/12; //5 days per week then same as weekly pay
                     break;
                 case "w":
                 case "W":
                     System.out.println("How much do you get per week?");
-                    customPay = Float.parseFloat(userIn.readLine());
+                    customPay = Float.parseFloat(App.userIn.readLine());
                     monthlySalary = (customPay*52)/12; //52 weeks in a year, but / by 12 for per month salary
                     break;
                 case "m":
                 case "M":
                     System.out.println("How much do you get per month?");
-                    monthlySalary = Float.parseFloat(userIn.readLine()); //leave it as it is
+                    monthlySalary = Float.parseFloat(App.userIn.readLine()); //leave it as it is
                     break;
                 case "y":
                 case "Y":
                     System.out.println("How much do you get per year?");
-                    customPay = Float.parseFloat(userIn.readLine());
+                    customPay = Float.parseFloat(App.userIn.readLine());
                     monthlySalary = customPay/12;
                     break;
                 default:
                     validInput = false;
                     System.out.println("Not a valid Input, try again:");
-                    frequency = userIn.readLine();
+                    frequency = App.userIn.readLine();
             }
         }
         
@@ -174,7 +166,7 @@ public class Incomes {
     private void removeIncome() throws IOException {
     	viewIncomes(); //Print all budgets to the console
 		System.out.println("Please enter a record number to delete");
-		String input = userIn.readLine();
+		String input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return;
 		}

@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -10,13 +8,6 @@ import java.sql.SQLException;
  */
 
 public class BudgetTime {
-	//Buffered reader declared to take user input within this class
-	private BufferedReader userIn;
-
-	//constructor used to initialise reading from client
-	public BudgetTime() {
-		userIn = new BufferedReader(new InputStreamReader(System.in));
-	}
 
 	/**
 	 * Set recurring budget over a time period
@@ -32,7 +23,7 @@ public class BudgetTime {
 		String input;
 
 		System.out.println("Please enter a budget (£) for the selected time period");
-		input = userIn.readLine();
+		input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return;
 		}
@@ -73,7 +64,7 @@ public class BudgetTime {
 	private void deleteBudget() throws IOException {
 		printBudgets(); //Print all budgets to the console
 		System.out.println("Please enter a record number to delete");
-		String input = userIn.readLine();
+		String input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return;
 		}
@@ -92,7 +83,7 @@ public class BudgetTime {
 	private void amendBudget() throws IOException {
 		printBudgets(); //Print all budgets to the console
 		System.out.println("Please enter a record number to amend");
-		String input = userIn.readLine();
+		String input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) { //Recordnumber input validated
 			return;
 		}
@@ -101,11 +92,11 @@ public class BudgetTime {
 			return;
 		}
 		System.out.println("Would you like to change:\n 1.budget\n 2.timeframe?"); //Find out what the user wants to amend
-		input = userIn.readLine();
+		input = App.userIn.readLine();
 		switch (input) {
 		case "1": //Switch statement to deal with both cases of amendments
 			System.out.println("Please enter an amount (£)");
-			input = userIn.readLine();
+			input = App.userIn.readLine();
 			if (!Validation.isInteger(input)) {
 				return;
 			}
@@ -133,7 +124,7 @@ public class BudgetTime {
 		String input; //To hold input from user via console
 
 		System.out.println("Would you like to input your budget in: \n 1.Days \n 2.Calendar Months \n 3.Years");
-		input = userIn.readLine();
+		input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return 0;
 		}	
@@ -143,7 +134,7 @@ public class BudgetTime {
 		}
 
 		System.out.println("Please enter the number of days/months/years you would like this goal for");
-		input = userIn.readLine();
+		input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return 0;
 		}	
@@ -165,38 +156,34 @@ public class BudgetTime {
 	/**
 	 * Called from the main program to give user budget options
 	 * Handles all IOExceptions thrown at other points in class
+	 * @throws IOException 
 	 */
-	public void mainMenu() {
-		try {
-			boolean loop = true;
-			while(loop) {
-				System.out.println("Would you like to:\n 1. Add a budget\n 2. Remove a budget\n 3. Amend a budget\n 4. View all budgets\n 5. Quit to main menu");
-				String input = userIn.readLine();
+	public void mainMenu() throws IOException {
+		boolean loop = true;
+		while(loop) {
+			System.out.println("Would you like to:\n 1. Add a budget\n 2. Remove a budget\n 3. Amend a budget\n 4. View all budgets\n 5. Quit to main menu");
+			String input = App.userIn.readLine();
 
-				switch(input) { //Use user input to decide which action to complete
-				case "1":
-					addBudget();
-					break;
-				case "2":
-					deleteBudget();
-					break;
-				case "3":
-					amendBudget();
-					break;
-				case "4":
-					printBudgets();
-					break;
-				case "5":
-					loop = false;
-				default: //Filter out invalid inputs
-					System.out.println("Not an option, try again");
-				}
+			switch(input) { //Use user input to decide which action to complete
+			case "1":
+				addBudget();
+				break;
+			case "2":
+				deleteBudget();
+				break;
+			case "3":
+				amendBudget();
+				break;
+			case "4":
+				printBudgets();
+				break;
+			case "5":
+				loop = false;
+			default: //Filter out invalid inputs
+				System.out.println("Not an option, try again");
 			}
-
-		}  catch (IOException e) { //Catches exceptions with reading console inputs
-			e.printStackTrace();
-			System.out.println("Unable to take input from console");
 		}
+
 	}
 
 }

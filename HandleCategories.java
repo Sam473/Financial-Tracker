@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.io.IOException;
 
 /**
  * Class which handles the category management
@@ -21,10 +21,10 @@ public class HandleCategories {
 
     /**
      * Prints the option when handling the user's purchases.
+     * @throws IOException 
      */
-    public void mainMenu(){
+    public void mainMenu() throws IOException{
         running = true;
-        Scanner scanner = new Scanner(System.in);
         while (running){
             System.out.println("Please select an option by using the character in brackets:\n" +
                     "1. Add new category\n" +
@@ -33,7 +33,7 @@ public class HandleCategories {
                     "4. Edit details of a category\n" +
                     "5. Remove category\n" +
                     "6. Return to main menu");
-            String input = scanner.nextLine();
+            String input = App.userIn.readLine();
             System.out.println(inputChecker(input));
         }
     }
@@ -42,8 +42,9 @@ public class HandleCategories {
      * takes input from main menu and calls correct method
      * @param input their choice from main menu options
      * @return Success/failure message
+     * @throws IOException 
      */
-    private String inputChecker(String input){
+    private String inputChecker(String input) throws IOException{
         switch (input) {
             case "1":
                 addCategory();
@@ -71,7 +72,6 @@ public class HandleCategories {
                 return "Exiting to Main Menu...\n\n";
             default:
                 return "Not an option. Choose again";
-
         }
     }
 
@@ -79,11 +79,11 @@ public class HandleCategories {
      * Creates a new category and adds it
      * to the properties file and to the existent list of categories
      * Note: each new category is automatically created with budget 0 and expenditure 0
+     * @throws IOException 
      */
-    private void addCategory() {
-        Scanner scanner = new Scanner(System.in);
+    private void addCategory() throws IOException {
         System.out.println("Enter the name of the category");
-        String category = scanner.nextLine();
+        String category = App.userIn.readLine();
         if(!existsCategory(category)){
             mainClass.existentCategories.add(new Category(category, 0));
             // format accordingly for properties file
@@ -125,12 +125,13 @@ public class HandleCategories {
 
     /**
      * Edit the details of a category (name or budget)
+     * @throws IOException 
+     * @throws NumberFormatException 
      */
-    private void editDetails(){
-        Scanner scanner = new Scanner(System.in);
+    private void editDetails() throws NumberFormatException, IOException{
         System.out.println("Current categories");
         viewCategories();
-        String value = scanner.nextLine();
+        String value = App.userIn.readLine();
         // cannot edit "Unknown"
         if(value.equals("Unknown")){
             System.out.println("There are no details for this category");
@@ -147,12 +148,11 @@ public class HandleCategories {
         // Check that it was found
         if(categoryToEdit != null){
             System.out.println("Input 1 to edit the name\n" + "Input 2 to edit the budget\n");
-            int option = scanner.nextInt();
-            scanner.nextLine();
+            int option = Integer.parseInt(App.userIn.readLine());
             switch (option){
                 case 1:
                     System.out.println("Enter the new name of the category: ");
-                    String newName = scanner.nextLine();
+                    String newName = App.userIn.readLine();
                     String oldName = categoryToEdit.returnName();
                     if(existsCategory(newName)){
                         System.out.println("A category with this name already exists so we can't edit the name.");
@@ -167,7 +167,7 @@ public class HandleCategories {
                     return;
                 case 2:
                     System.out.println("Enter the new budget: ");
-                    double newBudget = scanner.nextDouble();
+                    double newBudget = Float.parseFloat(App.userIn.readLine());
                     double oldBudget = categoryToEdit.getBudget();
                     categoryToEdit.newBudget(newBudget);
                     // update records for the budget
@@ -187,12 +187,12 @@ public class HandleCategories {
 
     /**
      * See details of a category
+     * @throws IOException 
      */
-    private void seeDetails(){
-        Scanner scanner = new Scanner(System.in);
+    private void seeDetails() throws IOException{
         System.out.println("Current categories");
         viewCategories();
-        String value = scanner.nextLine();
+        String value = App.userIn.readLine();
         // Unknown has no details
         if(value.equals("Unknown")){
             System.out.println("There are no details about this category");
@@ -211,12 +211,12 @@ public class HandleCategories {
     /**
      * Remove a certain category from both the properties file and from the array list
      * Update records for all purchases in that category and move them to the Unknown category
+     * @throws IOException 
      */
-    private void removeCategory(){
-        Scanner scanner = new Scanner(System.in);
+    private void removeCategory() throws IOException{
         System.out.println("Current categories");
         viewCategories();
-        String value = scanner.nextLine();
+        String value = App.userIn.readLine();
         // The preset categories cannot be removed
         if(value.equals("Unknown") || value.equals("Clothes") ||
                 value.equals("Transport") || value.equals("Groceries")){

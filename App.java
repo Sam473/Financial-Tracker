@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 /**
  * Main class of our software
@@ -12,10 +14,10 @@ public class App {
     RecurringOutgoings userRecOutgoings;
     PropertiesSetup properties;
     BudgetTime userBudget;
-    Scanner userIn = new Scanner(System.in);
     UserEntries userEntries;
     HandleCategories userCategories;
     private boolean running;
+    public static BufferedReader userIn; //Buffered reader declared to take user input within the project
     
     /**
      * Constructor -- creates preset Categories and adds them
@@ -32,6 +34,7 @@ public class App {
         running = true;
 		RetrieveAndStore.startDBConnection();
 		initializeCategories();
+		userIn = new BufferedReader(new InputStreamReader(System.in));
     }
 
     /**
@@ -60,7 +63,11 @@ public class App {
         while (running) {
             System.out.println(printMainMenu());
             System.out.println("Going to: ");
-            handleMainMenuInput(userIn.nextLine());
+            try {
+				handleMainMenuInput(userIn.readLine());
+			} catch (IOException e) { //Catches exceptions with reading console inputs
+				e.printStackTrace();
+			}
         }
     }
 
@@ -80,8 +87,9 @@ public class App {
     /**
      * Accept input from the user and handle the option accordingly
      * @param input option entered by the user
+     * @throws IOException 
      */
-    private void handleMainMenuInput(String input){
+    private void handleMainMenuInput(String input) throws IOException{
         switch (input) {
             case "1":
                 System.out.println("Purchases\n\n");

@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.io.IOException;
 
 /**
  * Class for a date
@@ -7,13 +7,12 @@ import java.util.Scanner;
 public class Date {
     //declaring fields
     private int day, month, year;
-    Scanner userIn;
 
     /**
      * Initialize the Date and make the user input it
+     * @throws IOException 
      */
-    public Date() {
-        userIn = new Scanner(System.in);
+    public Date() throws IOException {
         selectDay();
         selectMonth();
         selectYear();
@@ -21,10 +20,11 @@ public class Date {
 
     /**
      * Input the day -- not done need to check against weird input (i.e the 40th)
+     * @throws IOException 
      */
-    private void selectDay(){
+    private void selectDay() throws IOException{
         System.out.println("Please input a day for your purchase");
-        String day = userIn.nextLine();
+        String day = App.userIn.readLine();
         try{
             this.day = Integer.parseInt(day);
         } catch (NumberFormatException e){
@@ -35,10 +35,11 @@ public class Date {
 
     /**
      * Input the month -- not done need to check against weird input (i.e. the 13th)
+     * @throws IOException 
      */
-    private void selectMonth(){
+    private void selectMonth() throws IOException{
         System.out.println("Please input the number of the month.");
-        String month = userIn.nextLine();
+        String month = App.userIn.readLine();
         try {
             this.month = Integer.parseInt(month);
         } catch (NumberFormatException e){
@@ -49,10 +50,11 @@ public class Date {
 
     /**
      * Input the year -- not done need to check against weird year (i.e. -2000)
+     * @throws IOException 
      */
-    private void selectYear(){
+    private void selectYear() throws IOException{
         System.out.println("Please input the number of the year.");
-        String year = userIn.nextLine();
+        String year = App.userIn.readLine();
         try {
             this.year = Integer.parseInt(year);
         } catch (NumberFormatException e){
