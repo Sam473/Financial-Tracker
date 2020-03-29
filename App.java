@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class App {
 
     // declare fields
-    ArrayList<Category>existentCategories;
+    public static ArrayList<Category>existentCategories;
     Incomes userIncomes;
     RecurringOutgoings userRecOutgoings;
     PropertiesSetup properties;
@@ -29,8 +29,8 @@ public class App {
         userIncomes = new Incomes();
         userRecOutgoings = new RecurringOutgoings(properties);
         userBudget = new BudgetTime();
-        userEntries = new UserEntries(properties, this);
-        userCategories = new HandleCategories(properties, this);
+        userEntries = new UserEntries(properties);
+        userCategories = new HandleCategories(properties);
         running = true;
 		RetrieveAndStore.startDBConnection();
 		initializeCategories();

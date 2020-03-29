@@ -5,7 +5,6 @@ import java.io.IOException;
  * @author Paul
  */
 public class HandleCategories {
-    private final PropertiesSetup properties;
     private boolean running;
     private final App mainClass;
 
@@ -14,9 +13,8 @@ public class HandleCategories {
      * @param properties PropertiesSetup object --> properties file
      * @param mainClass Main class so we get a link to all the existent categories
      */
-    public HandleCategories(PropertiesSetup properties, App mainClass) {
+    public HandleCategories(PropertiesSetup properties) {
         this.properties = properties;
-        this.mainClass = mainClass;
     }
 
     /**
@@ -85,7 +83,7 @@ public class HandleCategories {
         System.out.println("Enter the name of the category");
         String category = App.userIn.readLine();
         if(!existsCategory(category)){
-            mainClass.existentCategories.add(new Category(category, 0));
+            App.existentCategories.add(new Category(category, 0));
             // format accordingly for properties file
             category += "-0.0-0.0";
             String value = (properties.getProperty("categories").equals("")) ? category : "," + category;
@@ -104,7 +102,7 @@ public class HandleCategories {
      *         false if not
      */
     private boolean existsCategory(String name){
-        for(Category category: mainClass.existentCategories){
+        for(Category category: App.existentCategories){
             if(name.equals(category.returnName())){
                 return true;
             }
@@ -139,7 +137,7 @@ public class HandleCategories {
         }
         // find the category object in the array list
         Category categoryToEdit = null;
-        for(Category category: mainClass.existentCategories){
+        for(Category category: App.existentCategories){
             if(value.equals(category.returnName())){
                 categoryToEdit = category;
                 break;
@@ -199,7 +197,7 @@ public class HandleCategories {
             return;
         }
         // find the category object in the array list and print the details
-        for(Category category: mainClass.existentCategories){
+        for(Category category: App.existentCategories){
             if(value.equals(category.returnName())){
                 System.out.println("Budget set for " + value + ": " + category.getBudget());
                 System.out.println("Total expenditure for " + value + ": " + category.getTotalAmountSpent());
@@ -225,7 +223,7 @@ public class HandleCategories {
         }
         // find the category object in the array list and remove it as well
         Category categoryToRemove = null;
-        for(Category category: mainClass.existentCategories){
+        for(Category category: App.existentCategories){
             if(value.equals(category.returnName())){
                 categoryToRemove = category;
                 break;
@@ -238,7 +236,7 @@ public class HandleCategories {
             properties.setProperty("categories",properties.getProperty("categories").
                 replaceAll(","+value + "-" + categoryToRemove.getBudget() + "-"
                         + categoryToRemove.getTotalAmountSpent(),""));
-            mainClass.existentCategories.remove(categoryToRemove);
+            App.existentCategories.remove(categoryToRemove);
         }
         else System.out.println("Category not found");
     }
