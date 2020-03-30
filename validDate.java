@@ -11,26 +11,26 @@ import java.util.Scanner;
  * @author Nick
  */
 public class validDate{
-    private Date date;
+    private static Date date;
 
     /**
      * Let the user create a date object in the right format (don't check yet for future or past
      * and return the valid date.
      */
-    public validDate(){
+    public String newDate(){
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
-        assignDate();
+        return assignDate();
     }
 
     /**
      * Let the user input until a valid date is given.
      */
-    private void assignDate(){
+    private String assignDate(){
         while(true){
             String userInput = enterDate();
             if(validFormat(userInput)){
                 System.out.println("Date added successfully");
-                return;
+                return userInput;
             }
             else{
                 System.out.println("Either the format is wrong, or the date does not exist, please try again.");
@@ -43,9 +43,9 @@ public class validDate{
      * of the format specified at the beginning of the class
      * @return String in the right format for further processing
      */
-    public String getDate(){
+    public static String getDate(){
         String[] elements = date.toString().split(" ");
-        return elements[2] + "." + processMonth(elements[1]) + "." + elements[5];
+        return elements[2] + "/" + processMonth(elements[1]) + "/" + elements[5];
     }
 
     /**
@@ -54,7 +54,7 @@ public class validDate{
      * @param month String for month EX: Jan for January
      * @return String representing number ex "01" for January
      */
-    private String processMonth(String month){
+    private static String processMonth(String month){
         switch (month){
             case "Jan": return "01";
             case "Feb": return "02";
@@ -88,7 +88,7 @@ public class validDate{
      * @return true if the format is correct
      *          false otherwise
      */
-    private boolean validFormat(String input){
+    public static boolean validFormat(String input){
         // set the format
         DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         format.setLenient(false);
@@ -118,9 +118,10 @@ public class validDate{
     * This method will be used if they want to set up a budget starting and finishing at two different dates in the future
     *
     */
-    private boolean futureDateCustom(Date customDate){
+    public static boolean futureDateCustom(Date customDate){
         return date.after(customDate);
     }
+
     /**
      * Method accepts input, creates a date object and makes it valid only if it is in the future
      * Good for the future.
@@ -143,12 +144,36 @@ public class validDate{
     }
 
     /**
+     * Takes two String dates in form dd/mm/yyyy and checks if the second if later than the first
+     * NOTE: Assumes both are valid dates
+     *
+     * @param date1 String in form dd/mm/yyyy
+     * @param date2 String in form dd/mm/yyyy
+     * @return true is second date comes after first date
+     * @throws NumberFormatException dd, mm or yyyy is not an int
+     * @throws ArrayIndexOutOfBoundsException not in format dd/mm/yyyy (i.e. too short)
+     */
+    public static boolean compareStringDates(String date1, String date2) throws NumberFormatException,ArrayIndexOutOfBoundsException{
+        int date1Day = Integer.parseInt(date1.substring(0, 2));
+        int date2Day = Integer.parseInt(date2.substring(0, 2));
+        int date1Month = Integer.parseInt(date1.substring(3, 5));
+        int date2Month = Integer.parseInt(date2.substring(3, 5));
+        int date1Year = Integer.parseInt(date1.substring(6));
+        int date2Year = Integer.parseInt(date2.substring(6));
+        if (date2Year > date1Year) {
+            return true;
+        } else if (date2Year == date1Year && date2Month > date1Month) {
+            return true;
+        } else return date2Year == date1Year && date2Month == date1Month && date2Day > date1Day;
+    }
+
+    /**
      * Main function for testing only -- created a constructor instead to incorporate the class
      * with the others
      * @param args cmd arguments
      */
     public static void main(String[] args) {
-        validDate valid = new validDate();
+        //validDate valid = new validDate();
         //valid.checkDate();
     }
 }

@@ -14,7 +14,7 @@ public class Entry {
     private ArrayList<Category> existentCategories;
     // in case user inputs an invalid amount
     private static final String INVALID_MESSAGE = "Please enter a positive amount, with maximum 2 decimals.";
-    private validDate date; // using our Data class
+    private String date; // using our Data class
     private Scanner userIn;
     private int guiltyLevel;
 
@@ -100,7 +100,8 @@ public class Entry {
      */
     public void selectDate(){
 
-        this.date = new validDate();
+       this.date = new validDate().newDate();
+
     }
 
     /**
@@ -141,7 +142,7 @@ public class Entry {
      * @return date of purchase
      */
     public String getDate() {
-        return date.getDate();
+        return date;
     }
 
     /**

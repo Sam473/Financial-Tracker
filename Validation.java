@@ -6,7 +6,7 @@ public abstract class Validation {
 
 	/**
 	 * Check if an input is a valid integer
-	 * @param string to be validated
+	 * @param toValidate to be validated
 	 * @return true if integer conversion succeeds, false otherwise
 	 */
 	public static boolean isInteger(String toValidate) {
@@ -23,7 +23,7 @@ public abstract class Validation {
 	 * Check if an input is in a valid range
 	 * @param lower bound of range (inclusive)
 	 * @param upper bound of range (inclusive)
-	 * @param integer to be validated
+	 * @param toValidate to be validated
 	 * @return true if in range, false otherwise
 	 */
 	public static boolean isRangeValid(int lower, int upper, int toValidate) {

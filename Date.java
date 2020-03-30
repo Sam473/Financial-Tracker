@@ -6,7 +6,7 @@ import java.util.Scanner;
  */
 public class Date {
     //declaring fields
-    private int day, month, year;
+    private static int day, month, year;
     Scanner userIn;
 
     /**
@@ -65,8 +65,8 @@ public class Date {
      * Get the date in a string form
      * @return String in format dd.mm.yyyy
      */
-    public String getDate(){
-        return String.valueOf(day) + '.' + (month) + '.' + (year);
+    public static String getTodayDate(){
+        return String.valueOf(day) + '/' + (month) + '/' + (year);
     }
 
 }
