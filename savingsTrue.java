@@ -185,6 +185,7 @@ public abstract class savingsTrue {
     }
 
     /* TODO:
+        Edit pool needs some InputMismatch stuff
         Remove pool
         Use global buffered reader instead of local scanner
         Comments
