@@ -31,16 +31,17 @@ public class BudgetTime {
 		int budgetAmount = 0; //Variable to hold the budget before it is stored
 		String input;
 
-		System.out.println("Please enter a budget (£) for the selected time period");
+		System.out.println("Please enter a budget (Â£) for the selected time period");
 		input = userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return;
 		}
 		budgetAmount = Integer.parseInt(input);
 
-		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES (" + budgetAmount + ", " + numberOfDays + ")");
+		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES ("
+				+ budgetAmount + ", " + numberOfDays + ")");
 		//Write SQL statement here then pass to method
-		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays + " days!");
+		System.out.println("Success a budget has been set for Â£" + budgetAmount + " every " + numberOfDays + " days!");
 	}
 
 	/**
@@ -57,7 +58,7 @@ public class BudgetTime {
 				int days = rs.getInt("NumberOfDays");
 
 				// print the results
-				System.out.format("%s. Budget amount = £%s, Number of days = %s\n", id, budget, days);
+				System.out.format("%s. Budget amount = Â£%s, Number of days = %s\n", id, budget, days);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -104,7 +105,7 @@ public class BudgetTime {
 		input = userIn.readLine();
 		switch (input) {
 		case "1": //Switch statement to deal with both cases of amendments
-			System.out.println("Please enter an amount (£)");
+			System.out.println("Please enter an amount (Â£)");
 			input = userIn.readLine();
 			if (!Validation.isInteger(input)) {
 				return;

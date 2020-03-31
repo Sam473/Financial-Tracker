@@ -1,10 +1,9 @@
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.time.Clock;
 import java.time.Instant;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.lang.Object;
 
 /**
  * Total Savings
@@ -93,12 +92,11 @@ public abstract class savingsTrue {
                     "MonthlyContribution, DateCreated, DateProjected) VALUES ('" + name + "', " + goal + ", " +
                     startingAmount + ", " + monthlyContribution + ", '"  + today + "', '" + dateToAchieve + "')");
 
-
+            rowNumberUpdater("tblSavings","ID");
             return true;
         } catch (InputMismatchException e) {
             System.out.println("Wrong input given");
             return false;
-
         }
     }
 
@@ -108,7 +106,7 @@ public abstract class savingsTrue {
             while (rs.next()) //Loop through the resultset
             {
                 //Store each budget record to print
-                int id = rs.getInt("SavingsAccountID");
+                int id = rs.getInt("ID");
                 String name = rs.getString("SavingsAccountName");
                 double goal = rs.getDouble("SavingsGoal");
                 double currentSavings = rs.getDouble("CurrentSavings");
@@ -125,7 +123,70 @@ public abstract class savingsTrue {
         }
     }
 
-    public static void editSavingPool(){
+    public static void editSavingPool() {
 
+        printAllSavingPools();
+        System.out.println("Please enter the ID number of the Pool you would like to update:");
+        int poolID = scanner.nextInt();
+        scanner.nextLine();
+        if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
+        try {
+            ResultSetMetaData rsmd = rs.getMetaData();
+            System.out.println("Great, which entry would you liked to update?");
+            for (int i = 1; i < rsmd.getColumnCount(); i++) {
+                System.out.println(String.format("%d: %s", i, rsmd.getColumnName(i)));
+            }
+
+            int columnInt = scanner.nextInt();
+            if (!Validation.isRangeValid(1, rsmd.getColumnCount()-1, columnInt)) return;
+            scanner.nextLine();
+            String columnName = rsmd.getColumnName(columnInt);
+            System.out.println("Please input a new value for " + columnName);
+
+            if (columnInt>=4) {
+                int newValue = scanner.nextInt();
+                scanner.nextLine();
+                RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d", "tblSavings",
+                        columnName, newValue, "ID", poolID));
+            } else if (columnInt == 2 || columnInt == 3){ // for date created
+                String newValue = scanner.nextLine();
+                String today = Instant.now().toString();
+                today = today.substring(8,10) + "/" + today.substring(5,7) + "/" + today.substring(0,4);
+                if(columnInt == 2 && validDate.validFormat(newValue) && validDate.compareStringDates(today, newValue, true)){
+                    RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
+                            columnName, newValue, "ID", poolID));
+                } else if(columnInt == 3 && validDate.validFormat(newValue) && validDate.compareStringDates(today, newValue)){
+                    RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
+                            columnName, newValue, "ID", poolID));
+                }
+            }  else {
+                String newValue = scanner.nextLine();
+                RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d", "tblSavings",
+                        columnName, newValue, "ID", poolID));
+            }
+            System.out.println("\n\nSuccessfully update field " + columnName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
+    public static void rowNumberUpdater(String tableName, String columnName){
+        ResultSet rs = RetrieveAndStore.readAllRecords(tableName);
+        int i = 0;
+        try {
+            while(rs.next()){
+                RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d;", tableName, columnName, i, columnName, rs.getInt(columnName)));
+                ++i;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* TODO:
+        Remove pool
+        Use global buffered reader instead of local scanner
+        Comments
+ */
 }

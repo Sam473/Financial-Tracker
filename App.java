@@ -131,7 +131,8 @@ public class App {
      */
     public static void main(String[] args) {
         App myApp = new App();
-        myApp.mainMenu();
+        //myApp.mainMenu();
+        savingsTrue.editSavingPool();
     }
 
 }

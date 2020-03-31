@@ -168,6 +168,38 @@ public class validDate{
     }
 
     /**
+     * Works like validDate.compareStringDates(String, String) but will return true
+     * when date 2 is same day or later than day 1
+     *
+     * @see #compareStringDates(String, String)
+     * @param date1 String in form dd/mm/yyyy
+     * @param date2 String in form dd/mm/yyyy
+     * @param allowSameDay if true, will return true when date 2 is same day or later than day 1
+     * @return true is second date comes after first date
+     * @throws NumberFormatException dd, mm or yyyy is not an int
+     * @throws ArrayIndexOutOfBoundsException not in format dd/mm/yyyy (i.e. too short)
+     */
+    public static boolean compareStringDates(String date1, String date2, boolean allowSameDay) throws NumberFormatException,ArrayIndexOutOfBoundsException{
+        int date1Day = Integer.parseInt(date1.substring(0, 2));
+        int date2Day = Integer.parseInt(date2.substring(0, 2));
+        int date1Month = Integer.parseInt(date1.substring(3, 5));
+        int date2Month = Integer.parseInt(date2.substring(3, 5));
+        int date1Year = Integer.parseInt(date1.substring(6));
+        int date2Year = Integer.parseInt(date2.substring(6));
+        if (date2Year > date1Year) {
+            return true;
+        } else if (date2Year == date1Year && date2Month > date1Month) {
+            return true;
+        } else {
+            if (allowSameDay) {
+                return date2Year == date1Year && date2Month == date1Month && date2Day >= date1Day;
+            } else{
+                return date2Year == date1Year && date2Month == date1Month && date2Day > date1Day;
+            }
+        }
+    }
+
+    /**
      * Main function for testing only -- created a constructor instead to incorporate the class
      * with the others
      * @param args cmd arguments
