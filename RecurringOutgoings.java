@@ -1,4 +1,4 @@
-import java.util.Scanner;
+import java.io.IOException;
 
 public class RecurringOutgoings {
     private final PropertiesSetup properties;
@@ -10,18 +10,18 @@ public class RecurringOutgoings {
 
     /**
      * will ask for which option on
+     * @throws IOException 
      */
-    public void mainMenu() {
+    public void mainMenu() throws IOException {
         running = true;
         while (running) {
-            Scanner scanner = new Scanner(System.in);
             System.out.println("Please select an option by using the character in brackets:\n" +
                     "1. Add new regular payment (Monthly)\n" +
                     "2. View all outgoings\n" +
                     "3. Your total outgoings\n" +
                     "4. Remove outgoing\n" +
                     "5. Return to main menu");
-            String input = scanner.nextLine();
+            String input = App.userIn.readLine();
             System.out.println(inputChecker(input));
         }
     }

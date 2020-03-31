@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 /**
  * Main class of our software
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 public class App {
 
     // declare fields
-    public static ArrayList<Category>existentCategories;
     Incomes userIncomes;
     RecurringOutgoings userRecOutgoings;
     PropertiesSetup properties;
@@ -24,37 +22,17 @@ public class App {
      *             -- creates the objects ofr handling each menu
      */
     public App(){
-        existentCategories = new ArrayList<>();
         properties = new PropertiesSetup();
         userIncomes = new Incomes();
         userRecOutgoings = new RecurringOutgoings(properties);
         userBudget = new BudgetTime();
-        userEntries = new UserEntries(properties);
-        userCategories = new HandleCategories(properties);
+        userEntries = new UserEntries();
+        userCategories = new HandleCategories();
         running = true;
 		RetrieveAndStore.startDBConnection();
-		initializeCategories();
 		userIn = new BufferedReader(new InputStreamReader(System.in));
     }
-
-    /**
-     * initialize the categories and add them to the array list
-     * Because in the properties file each category has the format:
-     * name-budget-expenditure we need to update the array list every time the code
-     * is run from scratch so we don't lose data
-     * @author Paul (if you have questions)
-     */
-    private void initializeCategories(){
-        String[] categories = properties.getProperty("categories").split(",");
-        for (String category : categories) {
-            if(!category.equals("0")){
-                String[] elements = category.split("-");
-                existentCategories.add(new Category(elements[0], Double.parseDouble(elements[1])));
-                existentCategories.get(existentCategories.size()-1).addExpenditure(Double.parseDouble(elements[2]));
-            }
-        }
-    }
-
+    
     /**
      * Main menu of the main class
      * Display until user exits the program
@@ -123,14 +101,6 @@ public class App {
             default:
                 System.out.println("Not an option, try again");
         }
-    }
-
-    /**
-     * Return the list of existent categories
-     * @return existent categories
-     */
-    public ArrayList<Category> getExistentCategories(){
-        return existentCategories;
     }
 
     /**

@@ -5,19 +5,8 @@ import java.util.Scanner;
  * @author Paul
  */
 public class UserEntries {
-    private final PropertiesSetup properties;
-    private final App mainClass;
     private boolean running;
 
-    /**
-     * Constructor
-     * @param properties PropertiesSetup object --> properties file
-     * @param mainClass Main class so we have a link to the list of existent categories
-     */
-    public UserEntries(PropertiesSetup properties, App mainClass) {
-        this.mainClass = mainClass;
-        this.properties = properties;
-    }
 
     /**
      * Prints the option when handling the user's purchases.
