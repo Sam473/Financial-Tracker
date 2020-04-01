@@ -15,7 +15,7 @@ public class RecurringOutgoings {
         running = true;
         while (running) {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Please select an option by using the character in brackets:\n" +
+            System.out.println("Please select an option by using the number associated with each command:\n" +
                     "1. Add new regular payment (Monthly)\n" +
                     "2. View all outgoings\n" +
                     "3. Your total outgoings\n" +

@@ -15,7 +15,7 @@ public class Incomes {
         running = true;
         while (running) {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("Please select an option by using the character in brackets:\n" +
+            System.out.println("Please select an option by using the number associated with each command:\n" +
                     "1. Add new income\n" +
                     "2. View all incomes\n" +
                     "3. View total monthly income\n" +

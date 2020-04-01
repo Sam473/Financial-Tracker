@@ -15,7 +15,7 @@ public class App {
     Scanner userIn = new Scanner(System.in);
     UserEntries userEntries;
     HandleCategories userCategories;
-    SavingsTrue savingsTrue;
+    Savings savings;
     private boolean running;
     
     /**
@@ -30,7 +30,7 @@ public class App {
         userBudget = new BudgetTime();
         userEntries = new UserEntries(properties, this);
         userCategories = new HandleCategories(properties, this);
-        savingsTrue = new SavingsTrue();
+        savings = new Savings();
         running = true;
 		RetrieveAndStore.startDBConnection();
 		initializeCategories();
@@ -109,7 +109,7 @@ public class App {
                 break;
             case "6":
                 System.out.println("Savings Pools");
-                savingsTrue.mainMenu();
+                savings.mainMenu();
                 break;
             case "7":
             	RequestData data = new RequestData(properties);

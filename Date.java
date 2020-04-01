@@ -61,6 +61,19 @@ public class Date {
         }
     }
 
+    public static String addMonths(String originalDate, int monthsToAdd){
+        String currentDay = originalDate.substring(0,2);
+        int currentMonth = Integer.parseInt(originalDate.substring(3,5));
+        int currentYear = Integer.parseInt(originalDate.substring(6));
+        int newMonth = currentMonth + monthsToAdd;
+        while (newMonth > 12) {
+            newMonth -= 12;
+            currentYear++;
+        }
+        return currentDay + "/" + newMonth + "/" + currentYear;
+
+    }
+
     /**
      * Get the date in a string form
      * @return String in format dd.mm.yyyy
