@@ -61,7 +61,7 @@ public class HandleCategories {
         String category = App.userIn.readLine();
         
         if(!existsCategory(category)){
-            RetrieveAndStore.sqlExecute("INSERT INTO tblCatagory (CategoryName, Budget, Expenditure) VALUES ('" + category + "', 0, 0 )");
+            RetrieveAndStore.sqlExecute("INSERT INTO tblCategory (CategoryName, Budget, Expenditure) VALUES ('" + category + "', 0, 0 )");
             System.out.print("Successfully added the category");
         } else{
         	System.out.println("This category already exists.");
@@ -75,11 +75,11 @@ public class HandleCategories {
      *         false if not
      */
     public static boolean existsCategory(String name){
-    	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
 		try {
 			while (rs.next()) //Loop through the resultset
 			{
-				if (name == rs.getString("CategoryName")) {
+				if (name.equals(rs.getString("CategoryName"))) {
 					return true;
 				}
 			}
@@ -94,7 +94,7 @@ public class HandleCategories {
      * List all categories
      */
     private void viewCategories(){
-    	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
 		try {
 			while (rs.next()) //Loop through the resultset
 			{
@@ -103,7 +103,7 @@ public class HandleCategories {
 				int budget = rs.getInt("Budget");
 				int expenditure = rs.getInt("Expenditure");
 				
-				System.out.format("%s. Category Name = £%s, Budget = %s, Expenditure = %s\n", id, name, budget, expenditure);
+				System.out.format("%s. Category Name = %s, Budget = £%s, Expenditure = £%s\n", id, name, budget, expenditure);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -112,7 +112,7 @@ public class HandleCategories {
     }
     
     public static void outputCategoryNames() {
-    	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
 		try {
 			while (rs.next()) //Loop through the resultset
 			{
@@ -151,12 +151,12 @@ public class HandleCategories {
                 System.out.println("A category with this name already exists so we can't edit the name.");
                 return;
             }
-            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET CategoryName = '" + newName + "' WHERE BudgetID = " + recordNumber);
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET CategoryName = '" + newName + "' WHERE CategoryID = " + recordNumber);
             break;
         case "2":
             System.out.println("Enter the new budget: ");
             double newBudget = Float.parseFloat(App.userIn.readLine());
-            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Budget = '" + newBudget + "' WHERE BudgetID = " + recordNumber);
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Budget = " + newBudget + " WHERE CategoryID = " + recordNumber);
             break;
         default:
             System.out.println("Invalid option");
@@ -177,15 +177,15 @@ public class HandleCategories {
             System.out.println("You cannot remove this category");
             return;
         }
-        ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
 		try {
 			while (rs.next()) //Loop through the resultset
 			{
 				String name = rs.getString("CategoryName");
 				int expenditure = rs.getInt("Expenditure");
 				
-				if (name == value) { //check this works
-					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure + " + expenditure + " WHERE BudgetName = Unknown");
+				if (name.equals(value)) { //check this works
+					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure + " + expenditure + " WHERE CategoryName = 'Unknown'");
 					RetrieveAndStore.sqlExecute("DELETE FROM tblCategory WHERE CategoryName = '" + value + "'");
 				}
 			}

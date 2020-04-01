@@ -25,7 +25,6 @@ public class UserEntries {
             switch (input) {
             case "1":
                 addPurchase();
-                System.out.println("Successfully added a new purchase");
                 break;
             case "2":
                 viewPurchases();
@@ -70,11 +69,10 @@ public class UserEntries {
             String guilt = App.userIn.readLine();
         	
         	
-            RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, Category) VALUES (" + amount + "," + date + "," + guilt + ",'" + category + "')");
+            RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, Category) VALUES (" + amount + ", '" + date + "', " + guilt + ",'" + category + "')");
             RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount + " WHERE CategoryName = '" + category + "'");
-            System.out.print("Successfully added the category");
         } else{
-        	System.out.println("This category already exists.");
+        	System.out.println("This category doesn't exist");
         }
     	
     	//Ask them to select a category
@@ -112,14 +110,14 @@ public class UserEntries {
     private void removePurchase() throws IOException{
         viewPurchases();
         System.out.println("Enter a purchase ID for the purchase you want to be deleted");
-        ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblPurchases");
         int value = Integer.parseInt(App.userIn.readLine());
 		try {
 			while (rs.next()) //Loop through the resultset
 			{
 				if (value == rs.getInt("PurchaseID")) {
-					int expenditure = rs.getInt("Expenditure");
-					String category = rs.getString("CategoryName");
+					int expenditure = rs.getInt("PurchaseAmount");
+					String category = rs.getString("Category");
 					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure -" + expenditure + " WHERE CategoryName = '" + category + "'");
 				}
 				RetrieveAndStore.sqlExecute("DELETE FROM tblPurchases WHERE PurchaseID = '" + value + "'");

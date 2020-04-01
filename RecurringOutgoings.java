@@ -1,15 +1,17 @@
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class RecurringOutgoings {
-    private boolean running;
 
 
     /**
      * will ask for which option on
+     * takes input from main menu and calls correct method
      * @throws IOException 
      */
     public void mainMenu() throws IOException {
-        running = true;
+        boolean running = true;
         while (running) {
             System.out.println("Please select an option by using the character in brackets:\n" +
                     "1. Add new regular payment (Monthly)\n" +
@@ -18,85 +20,99 @@ public class RecurringOutgoings {
                     "4. Remove outgoing\n" +
                     "5. Return to main menu");
             String input = App.userIn.readLine();
-            System.out.println(inputChecker(input));
-        }
-    }
-
-    /**
-     * takes input from main menu and calls correct method
-     * @param input their choice from main menu options
-     * @return Success/failure message
-     */
-    private String inputChecker(String input) {
-        switch (input) {
+            switch (input) {
             case "1":
                 addOutgoing();
-                return "Successfully added new outgoing\n";
+                System.out.println("Successfully added new outgoing\n");
+                break;
             case "2":
                 viewOutgoings();
-                return "";
+                break;
             case "3":
-                return "Your total outgoings:\nÂ£" + totalOutgoings();
+            	System.out.println("Your total outgoings:\n£" + totalOutgoings());
+            	break;
             case "4":
-                System.out.println("Please enter the outgoing you would like to remove (exactly as it appears)");
                 removeOutgoing();
-                return "Successfully removed outgoing";
+                System.out.println("Successfully removed outgoing");
+                break;
             case "5":
                 running = false;
-                return "Exiting to Main Menu...\n\n";
+                System.out.println("Exiting to Main Menu...\n\n");
+                break;
             default:
-                return "Not an option. Choose again";
-
+            	System.out.println("Not an option, try again.");
+                break;
+        }
         }
     }
-
 
     /**
      * will sum all outgoings
      * @return sum of all outgoings
      */
     private float totalOutgoings()  {
-        if (!properties.getProperty("outgoings").equals("")) {
-            String[] outgoings = properties.getProperty("outgoings").split(",");
-            float totalOutgoings = 0;
-            for (String outgoing : outgoings) {
-                try {
-                    totalOutgoings += Float.parseFloat(outgoing);
-                } catch (NumberFormatException e) {
-                    System.out.println("Error: " + outgoing + " not a float or integer");
-                    properties.setProperty("outgoings",properties.getProperty("outgoings").replaceAll(","+outgoing,""));
-                    //will remove the faulty value from the outgoings list
-                }
-            }
-            return totalOutgoings;
-        } else {
-            return 0;
-        }
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblOutgoings");
+    	float total = 0;
+		try {
+			while (rs.next()) // Loop through the resultset
+			{
+				total += rs.getInt("OutgoingAmount"); //Sum total of all outgoings
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return total;
     }
 
     private void viewOutgoings() {
-        String[] outcomes = properties.getProperty("outgoings").split(",");
-        for (String outcome : outcomes) {
-            System.out.println(outcome);
-        }
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblOutgoings");
+		try {
+			while (rs.next()) // Loop through the resultset
+			{
+				// Store each outgoing record to print
+				int id = rs.getInt("OutgoingID");
+				String name = rs.getString("OutgoingName");
+				float amount = rs.getInt("OutgoingAmount");
+
+				// print the results
+				System.out.format("%s. Name = %s, Amount = £%s\n", id, name, amount);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 
     /**
      * will add an outgoing to the outgoings in properties file
+     * @throws IOException 
+     * @throws NumberFormatException 
      */
-    private void addOutgoing() {
-        Scanner scannerOutgoing = new Scanner(System.in);
+    private void addOutgoing() throws NumberFormatException, IOException {
         System.out.println("How much will you be paying per month?");
-        properties.setProperty("outgoings",properties.getProperty("outgoings") + "," + scannerOutgoing.nextFloat());
-        //add ",{amount}" to end of outgoings
+        float amount = Float.parseFloat(App.userIn.readLine());
+        System.out.println("What is the name of this payment?");
+        String name = App.userIn.readLine();
+        
+        RetrieveAndStore.sqlExecute("INSERT INTO tblOutgoings (OutgoingName, OutgoingAmount) VALUES ('" + name + "', "
+				+ amount + ")");
+        
     }
 
-    private void removeOutgoing() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Current Outgoings");
+    private void removeOutgoing() throws IOException {
         viewOutgoings();
-        String value = scanner.nextLine();
-        properties.setProperty("outgoings",properties.getProperty("outgoings").replaceAll(","+value,""));
+        System.out.println("Please type the record number of the record you would like to delete");
+        String value = App.userIn.readLine();
+        if (!Validation.isInteger(value)) {
+			return;
+		}
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblOutgoings", "OutgoingID"), Integer.parseInt(value))) {
+			return;
+		}
+		RetrieveAndStore.sqlExecute("DELETE FROM tblOutgoings WHERE OutgoingID = " + value); // Call method to execute
+																							   // deletion
+		System.out.format("Record %s deleted successfully\n", value); // Tell the user record has been removed
     }
 }
