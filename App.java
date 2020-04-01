@@ -69,7 +69,7 @@ public class App {
      * @throws IOException
      */
     private void handleMainMenuInput(String input) throws IOException {
-        System.out.print("Going to: ");
+        System.out.print("\nGoing to: ");
         switch (input) {
             case "1":
                 System.out.println("Purchases\n\n");

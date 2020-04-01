@@ -19,6 +19,16 @@ public abstract class Validation {
 		}
 	}
 
+	public static boolean isDouble(String toValidate) {
+		try{
+			Double.parseDouble(toValidate);
+			return true;
+		} catch (NumberFormatException e) {
+			System.out.println("Please enter a number");
+			return false;
+		}
+	}
+
 	/**
 	 * Check if an input is in a valid range
 	 * @param lower bound of range (inclusive)
