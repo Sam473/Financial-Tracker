@@ -74,7 +74,7 @@ public class HandleCategories {
      * @return true if the category exists
      *         false if not
      */
-    private boolean existsCategory(String name){
+    public static boolean existsCategory(String name){
     	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
 		try {
 			while (rs.next()) //Loop through the resultset
@@ -104,6 +104,19 @@ public class HandleCategories {
 				int expenditure = rs.getInt("Expenditure");
 				
 				System.out.format("%s. Category Name = £%s, Budget = %s, Expenditure = %s\n", id, name, budget, expenditure);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public static void outputCategoryNames() {
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				System.out.println(rs.getString("CategoryName"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -169,10 +182,11 @@ public class HandleCategories {
 			while (rs.next()) //Loop through the resultset
 			{
 				String name = rs.getString("CategoryName");
-				int budget = rs.getInt("Budget");
+				int expenditure = rs.getInt("Expenditure");
 				
 				if (name == value) { //check this works
-					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Budget = Budget + " + budget + " WHERE BudgetName = " + name);
+					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure + " + expenditure + " WHERE BudgetName = Unknown");
+					RetrieveAndStore.sqlExecute("DELETE FROM tblCategory WHERE CategoryName = '" + value + "'");
 				}
 			}
 		} catch (SQLException e) {

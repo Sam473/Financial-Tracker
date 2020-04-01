@@ -10,7 +10,6 @@ public class App {
     // declare fields
     Incomes userIncomes;
     RecurringOutgoings userRecOutgoings;
-    PropertiesSetup properties;
     BudgetTime userBudget;
     UserEntries userEntries;
     HandleCategories userCategories;
@@ -19,12 +18,11 @@ public class App {
     
     /**
      * Constructor -- creates preset Categories and adds them
-     *             -- creates the objects ofr handling each menu
+     *             -- creates the objects for handling each menu
      */
     public App(){
-        properties = new PropertiesSetup();
         userIncomes = new Incomes();
-        userRecOutgoings = new RecurringOutgoings(properties);
+        userRecOutgoings = new RecurringOutgoings();
         userBudget = new BudgetTime();
         userEntries = new UserEntries();
         userCategories = new HandleCategories();
@@ -90,7 +88,7 @@ public class App {
                 userBudget.mainMenu();
                 break;
           case "6":
-            	RequestData data = new RequestData(properties);
+            	RequestData data = new RequestData();
                 data.saveDataToDesktop();
                 break;
             case "7":

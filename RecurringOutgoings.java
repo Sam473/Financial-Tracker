@@ -1,12 +1,8 @@
 import java.io.IOException;
 
 public class RecurringOutgoings {
-    private final PropertiesSetup properties;
     private boolean running;
 
-    public RecurringOutgoings(PropertiesSetup propertiesSetup) {
-        this.properties = propertiesSetup;
-    }
 
     /**
      * will ask for which option on

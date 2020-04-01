@@ -3,13 +3,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 public class RequestData {
-    private final PropertiesSetup properties;
-    String desktop = System.getProperty("user.home") + "/Desktop";
+	String desktop = System.getProperty("user.home") + "/Desktop";
 
-
-    public RequestData(PropertiesSetup properties) {
-        this.properties = properties;
-    }
 
     public void saveDataToDesktop() {
         try {
