@@ -9,10 +9,49 @@ import java.util.Scanner;
  * Total Savings
  * @author Luke
  */
-public abstract class savingsTrue {
-    static Scanner  scanner = new Scanner(System.in);
+public class SavingsTrue {
+    private boolean running;
+    Scanner scanner = new Scanner(System.in);
 
-    public static boolean newSavingPool(/*BufferedReader reader */) throws InputMismatchException {
+    public void mainMenu(){
+        running = true;
+        while (running) {
+            System.out.println("Please select an option by using the character in brackets:\n" +
+                    "1. Add new savings pool\n" +
+                    "2. Edit an existing savings pool\n" +
+                    "3. Delete a savings pool\n" +
+                    "4. View your projections\n" +
+                    "5. Return to main menu");
+            String input = scanner.nextLine();
+            inputChecker(input);
+        }
+    }
+
+    /**
+     * takes input from main menu and calls correct method
+     * @param input their choice from main menu options
+     * @return Success/failure message
+     */
+    private void inputChecker(String input) {
+        switch (input) {
+            case "1":
+                newSavingPool();
+            case "2":
+                editSavingPool();
+            case "3":
+                removeSavingPool();
+            case "4":
+                System.out.println("Not available, WIP");
+            case "5":
+                running = false;
+                System.out.println("Exiting to Main Menu...\n\n");
+            default:
+                System.out.println("Not an option. Choose again");
+
+        }
+    }
+
+    public  boolean newSavingPool(/*BufferedReader reader */) throws InputMismatchException {
         String today = Instant.now().toString();
         today = today.substring(8,10) + "/" + today.substring(5,7) + "/" + today.substring(0,4);
 
@@ -100,7 +139,7 @@ public abstract class savingsTrue {
         }
     }
 
-    public static void printAllSavingPools(){
+    public void printAllSavingPools(){
         ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
         try {
             while (rs.next()) //Loop through the resultset
@@ -123,7 +162,7 @@ public abstract class savingsTrue {
         }
     }
 
-    public static void editSavingPool() {
+    public void editSavingPool() {
 
         printAllSavingPools();
         System.out.println("Please enter the ID number of the Pool you would like to update:");
@@ -171,7 +210,18 @@ public abstract class savingsTrue {
         }
     }
 
-    public static void rowNumberUpdater(String tableName, String columnName){
+    public void removeSavingPool(){
+        printAllSavingPools();
+        System.out.println("Please enter the ID number of the Pool you would like to delete:");
+        int poolID = scanner.nextInt();
+        scanner.nextLine();
+        if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
+        RetrieveAndStore.sqlExecute(String.format("DELETE FROM %s WHERE %s = %d", "tblSavings", "ID", poolID));
+        rowNumberUpdater("tblSavings", "ID");
+    }
+
+    public void rowNumberUpdater(String tableName, String columnName){
         ResultSet rs = RetrieveAndStore.readAllRecords(tableName);
         int i = 0;
         try {
@@ -183,10 +233,11 @@ public abstract class savingsTrue {
             e.printStackTrace();
         }
     }
+    
 
     /* TODO:
+        projections
         Edit pool needs some InputMismatch stuff
-        Remove pool
         Use global buffered reader instead of local scanner
         Comments
  */

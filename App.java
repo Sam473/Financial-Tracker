@@ -15,6 +15,7 @@ public class App {
     Scanner userIn = new Scanner(System.in);
     UserEntries userEntries;
     HandleCategories userCategories;
+    SavingsTrue savingsTrue;
     private boolean running;
     
     /**
@@ -29,6 +30,7 @@ public class App {
         userBudget = new BudgetTime();
         userEntries = new UserEntries(properties, this);
         userCategories = new HandleCategories(properties, this);
+        savingsTrue = new SavingsTrue();
         running = true;
 		RetrieveAndStore.startDBConnection();
 		initializeCategories();
@@ -58,8 +60,8 @@ public class App {
      */
     private void mainMenu() {
         while (running) {
+            System.out.println("Please choose an option from the following:");
             System.out.println(printMainMenu());
-            System.out.println("Going to: ");
             handleMainMenuInput(userIn.nextLine());
         }
     }
@@ -73,8 +75,9 @@ public class App {
                 "3. Manage incomes\n" +
                 "4. Manage recurring outgoings\n" +
                 "5. Manage budget\n" +
-              	"6. Request data\n" +
-                "7. Exit";
+                "6. Manage Savings Pools\n" +
+              	"7. Request data\n" +
+                "8. Exit";
     }
 
     /**
@@ -82,6 +85,7 @@ public class App {
      * @param input option entered by the user
      */
     private void handleMainMenuInput(String input){
+        System.out.print("Going to: ");
         switch (input) {
             case "1":
                 System.out.println("Purchases\n\n");
@@ -103,17 +107,21 @@ public class App {
                 System.out.println("Budgets");
                 userBudget.mainMenu();
                 break;
-          case "6":
+            case "6":
+                System.out.println("Savings Pools");
+                savingsTrue.mainMenu();
+                break;
+            case "7":
             	RequestData data = new RequestData(properties);
                 data.saveDataToDesktop();
                 break;
-            case "7":
+            case "8":
             	System.out.println("Thank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
                 break;
             default:
-                System.out.println("Not an option, try again");
+                System.out.println("\rNot an option, try again");
         }
     }
 
@@ -131,8 +139,7 @@ public class App {
      */
     public static void main(String[] args) {
         App myApp = new App();
-        //myApp.mainMenu();
-        savingsTrue.editSavingPool();
+        myApp.mainMenu();
     }
 
 }
