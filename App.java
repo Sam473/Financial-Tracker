@@ -1,5 +1,6 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * Main class of our software
@@ -7,51 +8,29 @@ import java.util.Scanner;
 public class App {
 
     // declare fields
-    ArrayList<Category>existentCategories;
     Incomes userIncomes;
     RecurringOutgoings userRecOutgoings;
-    PropertiesSetup properties;
     BudgetTime userBudget;
-    Scanner userIn = new Scanner(System.in);
     UserEntries userEntries;
     HandleCategories userCategories;
     private boolean running;
+    public static BufferedReader userIn; //Buffered reader declared to take user input within the project
     
     /**
      * Constructor -- creates preset Categories and adds them
-     *             -- creates the objects ofr handling each menu
+     *             -- creates the objects for handling each menu
      */
     public App(){
-        existentCategories = new ArrayList<>();
-        properties = new PropertiesSetup();
-        userIncomes = new Incomes(properties);
-        userRecOutgoings = new RecurringOutgoings(properties);
+        userIncomes = new Incomes();
+        userRecOutgoings = new RecurringOutgoings();
         userBudget = new BudgetTime();
-        userEntries = new UserEntries(properties, this);
-        userCategories = new HandleCategories(properties, this);
+        userEntries = new UserEntries();
+        userCategories = new HandleCategories();
         running = true;
 		RetrieveAndStore.startDBConnection();
-		initializeCategories();
+		userIn = new BufferedReader(new InputStreamReader(System.in));
     }
-
-    /**
-     * initialize the categories and add them to the array list
-     * Because in the properties file each category has the format:
-     * name-budget-expenditure we need to update the array list every time the code
-     * is run from scratch so we don't lose data
-     * @author Paul (if you have questions)
-     */
-    private void initializeCategories(){
-        String[] categories = properties.getProperty("categories").split(",");
-        for (String category : categories) {
-            if(!category.equals("0")){
-                String[] elements = category.split("-");
-                existentCategories.add(new Category(elements[0], Double.parseDouble(elements[1])));
-                existentCategories.get(existentCategories.size()-1).addExpenditure(Double.parseDouble(elements[2]));
-            }
-        }
-    }
-
+    
     /**
      * Main menu of the main class
      * Display until user exits the program
@@ -60,7 +39,11 @@ public class App {
         while (running) {
             System.out.println(printMainMenu());
             System.out.println("Going to: ");
-            handleMainMenuInput(userIn.nextLine());
+            try {
+				handleMainMenuInput(userIn.readLine());
+			} catch (IOException e) { //Catches exceptions with reading console inputs
+				e.printStackTrace();
+			}
         }
     }
 
@@ -80,8 +63,9 @@ public class App {
     /**
      * Accept input from the user and handle the option accordingly
      * @param input option entered by the user
+     * @throws IOException 
      */
-    private void handleMainMenuInput(String input){
+    private void handleMainMenuInput(String input) throws IOException{
         switch (input) {
             case "1":
                 System.out.println("Purchases\n\n");
@@ -104,7 +88,7 @@ public class App {
                 userBudget.mainMenu();
                 break;
           case "6":
-            	RequestData data = new RequestData(properties);
+            	RequestData data = new RequestData();
                 data.saveDataToDesktop();
                 break;
             case "7":
@@ -115,14 +99,6 @@ public class App {
             default:
                 System.out.println("Not an option, try again");
         }
-    }
-
-    /**
-     * Return the list of existent categories
-     * @return existent categories
-     */
-    public ArrayList<Category> getExistentCategories(){
-        return existentCategories;
     }
 
     /**

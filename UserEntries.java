@@ -1,65 +1,47 @@
-import java.util.Scanner;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Class which handles the purchases (the user entries)
  * @author Paul
  */
 public class UserEntries {
-    private final PropertiesSetup properties;
-    private final App mainClass;
-    private boolean running;
-
-    /**
-     * Constructor
-     * @param properties PropertiesSetup object --> properties file
-     * @param mainClass Main class so we have a link to the list of existent categories
-     */
-    public UserEntries(PropertiesSetup properties, App mainClass) {
-        this.mainClass = mainClass;
-        this.properties = properties;
-    }
-
     /**
      * Prints the option when handling the user's purchases.
+     * takes input from main menu and calls correct method
+     * @throws IOException 
      */
-    public void mainMenu(){
-        running = true;
-        Scanner scanner = new Scanner(System.in);
+    public void mainMenu() throws IOException{
+        boolean running = true;
         while (running){
             System.out.println("Please select an option by using the character in brackets:\n" +
                     "1. Add new purchase\n" +
                     "2. View all purchases\n" +
                     "3. Remove purchase\n" +
                     "4. Return to main menu");
-            String input = scanner.nextLine();
-            System.out.println(inputChecker(input));
-        }
-    }
-
-    /**
-     * takes input from main menu and calls correct method
-     * @param input their choice from main menu options
-     * @return Success/failure message
-     */
-    private String inputChecker(String input){
-        switch (input) {
+            String input = App.userIn.readLine();
+            
+            switch (input) {
             case "1":
                 addPurchase();
-                return "Successfully added new purchase\n";
+                break;
             case "2":
                 viewPurchases();
-                return "";
+                break;
             case "3":
                 System.out.println("Please enter the purchase you would like" +
                         " to remove (exactly as it appears)");
                 removePurchase();
-                return "Successfully removed purchase";
+                System.out.println("Successfully removed purchase");
+                break;
             case "4":
                 running = false;
-                return "Exiting to Main Menu...\n\n";
+                System.out.println("Exiting to Main Menu...\n\n");
+                break;
             default:
-                return "Not an option. Choose again";
-
+                System.out.println("Not an option. Choose again");
+        }
         }
     }
 
@@ -67,64 +49,84 @@ public class UserEntries {
      * Creates a new purchase (user entry) and adds it
      * to the properties file
      * Also, adds the amount to the total expenditure of a category
+     * @throws IOException 
      */
-    private void addPurchase(){
-        // add purchase to file
-        Entry newPurchase = new Entry(mainClass);
-        String purchase = newPurchase.getAmount() + " " + newPurchase.getCategory().returnName() +
-                 " " +newPurchase.getDate() + " " + newPurchase.getGuilt();
-        String value = (properties.getProperty("purchases").equals("")) ? purchase : "," + purchase;
-        properties.setProperty("purchases", properties.getProperty("purchases") + value);
-        // add expenditure to the category
-        // make use of format name-budget-expenditure
-        Category category = newPurchase.getCategory();
-        System.out.println(category.returnName() + "-" + category.getBudget() +
-                "-" + (newPurchase.getAmount() + category.getTotalAmountSpent()));
-        properties.setProperty("categories", properties.getProperty("categories").
-                replaceAll(category.returnName() + "-" + category.getBudget() + "-" +
-                        category.getTotalAmountSpent(), category.returnName() + "-" + category.getBudget() +
-                "-" + (newPurchase.getAmount() + category.getTotalAmountSpent())));
-        newPurchase.getCategory().addExpenditure(newPurchase.getAmount());
+    private void addPurchase() throws IOException{
+    	//Output the categories
+    	HandleCategories.outputCategoryNames();
+    	System.out.println("Please type a category name for the purchase");
+        String category = App.userIn.readLine();
+        
+        if(HandleCategories.existsCategory(category)){
+        	
+        	validDate date;
+        	date = new validDate();
+        	
+        	System.out.println("Please type a amount for the purchase");
+            float amount = Float.parseFloat(App.userIn.readLine());
+        	
+            System.out.println("Please type a level of guilt for the purchase");
+            String guilt = App.userIn.readLine();
+        	
+        	
+            RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, Category) VALUES (" + amount + ", '" + date + "', " + guilt + ",'" + category + "')");
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount + " WHERE CategoryName = '" + category + "'");
+        } else{
+        	System.out.println("This category doesn't exist");
+        }
+    	
+    	//Ask them to select a category
+    	//Ask for purchase details
+    	//Put into db table for purchases and table for categories
     }
 
     /**
      * List all purchases
      */
     private void viewPurchases(){
-        String[] purchases = properties.getProperty("purchases").split(",");
-        for (String purchase : purchases) {
-            // don't print the default 0
-            if(!purchase.equals("0")) System.out.println(purchase);
-        }
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblPurchases");
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				int id = rs.getInt("PurchaseID");
+				String category = rs.getString("Category");
+				String date = rs.getString("PurchaseDate");
+				int amount = rs.getInt("PurchaseAmount");
+				int guilt = rs.getInt("GuiltyLevel");
+				
+				System.out.format("%s. Date = %s, Amount = £%s, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
      * Remove a certain purchase and the amount from the category
      * Update records for the properties file
+     * @throws IOException 
      */
-    private void removePurchase(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Current Purchases");
+    private void removePurchase() throws IOException{
         viewPurchases();
-        String value = scanner.nextLine();
-        // find the name of the category and remove the expenditure from it
-        String categoryName = value.split(" ")[1];
-        // amount of purchase
-        double amount = Double.parseDouble(value.split(" ")[0]);
-        // find category
-        for(Category category: mainClass.existentCategories){
-            if(category.returnName().equals(categoryName)){
-                // remove expenditure
-                properties.setProperty("categories", properties.getProperty("categories").
-                        replaceAll(category.returnName() + "-" + category.getBudget() +
-                                "-" + category.getTotalAmountSpent(), category.returnName() + "-" +
-                                category.getBudget() + "-" + (category.getTotalAmountSpent() - amount) ));
-                // update the object as well
-                category.removeExpenditure(amount);
-            }
-        }
-        // delete from file
-        properties.setProperty("purchases",properties.getProperty("purchases").
-                replaceAll(","+value,""));
+        System.out.println("Enter a purchase ID for the purchase you want to be deleted");
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblPurchases");
+        int value = Integer.parseInt(App.userIn.readLine());
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				if (value == rs.getInt("PurchaseID")) {
+					int expenditure = rs.getInt("PurchaseAmount");
+					String category = rs.getString("Category");
+					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure -" + expenditure + " WHERE CategoryName = '" + category + "'");
+				}
+				RetrieveAndStore.sqlExecute("DELETE FROM tblPurchases WHERE PurchaseID = '" + value + "'");
+			}
+			System.out.println("Purchase deleted successfully");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        //delete purchase from tblCategory, tblPurchases
     }
 }
