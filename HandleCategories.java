@@ -1,77 +1,52 @@
-import java.util.Scanner;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Class which handles the category management
  * @author Paul
  */
 public class HandleCategories {
-    private final PropertiesSetup properties;
-    private boolean running;
-    private final App mainClass;
 
-    /**
-     * Constructor
-     * @param properties PropertiesSetup object --> properties file
-     * @param mainClass Main class so we get a link to all the existent categories
-     */
-    public HandleCategories(PropertiesSetup properties, App mainClass) {
-        this.properties = properties;
-        this.mainClass = mainClass;
-    }
 
     /**
      * Prints the option when handling the user's purchases.
+     * @throws IOException 
      */
-    public void mainMenu(){
-        running = true;
-        Scanner scanner = new Scanner(System.in);
+    public void mainMenu() throws IOException{
+    	boolean running = true;
         while (running){
             System.out.println("Please select an option by using the character in brackets:\n" +
                     "1. Add new category\n" +
                     "2. View all categories\n" +
-                    "3. See details of a category\n" +
-                    "4. Edit details of a category\n" +
-                    "5. Remove category\n" +
-                    "6. Return to main menu");
-            String input = scanner.nextLine();
-            System.out.println(inputChecker(input));
-        }
-    }
-
-    /**
-     * takes input from main menu and calls correct method
-     * @param input their choice from main menu options
-     * @return Success/failure message
-     */
-    private String inputChecker(String input){
-        switch (input) {
+                    "3. Edit details of a category\n" +
+                    "4. Remove category\n" +
+                    "5. Return to main menu");
+            String input = App.userIn.readLine();
+            switch (input) {
             case "1":
                 addCategory();
-                return "\n";
+                break;
             case "2":
                 viewCategories();
-                return "";
+                break;
             case "3":
-                System.out.println("Please enter the category you would like" +
-                        " to see the details for (exactly as it appears)");
-                seeDetails();
-                return "";
-            case "4":
                 System.out.println("Please enter the category you would like" +
                         " to edit the details for (exactly as it appears)");
                 editDetails();
-                return "";
-            case "5":
+                break;
+            case "4":
                 System.out.println("Please enter the category you would like" +
                         " to remove (exactly as it appears)");
                 removeCategory();
-                return "";
-            case "6":
+                break;
+            case "5":
                 running = false;
-                return "Exiting to Main Menu...\n\n";
+                break;
             default:
-                return "Not an option. Choose again";
-
+            	System.out.println("Not an option. Choose again");
+            	break;
+            }
         }
     }
 
@@ -79,21 +54,17 @@ public class HandleCategories {
      * Creates a new category and adds it
      * to the properties file and to the existent list of categories
      * Note: each new category is automatically created with budget 0 and expenditure 0
+     * @throws IOException 
      */
-    private void addCategory() {
-        Scanner scanner = new Scanner(System.in);
+    private void addCategory() throws IOException {
         System.out.println("Enter the name of the category");
-        String category = scanner.nextLine();
+        String category = App.userIn.readLine();
+        
         if(!existsCategory(category)){
-            mainClass.existentCategories.add(new Category(category, 0));
-            // format accordingly for properties file
-            category += "-0.0-0.0";
-            String value = (properties.getProperty("categories").equals("")) ? category : "," + category;
-            properties.setProperty("categories", properties.getProperty("categories") + value);
+            RetrieveAndStore.sqlExecute("INSERT INTO tblCategory (CategoryName, Budget, Expenditure) VALUES ('" + category + "', 0, 0 )");
             System.out.print("Successfully added the category");
-        }
-        else{
-            System.out.println("This category already exists.");
+        } else{
+        	System.out.println("This category already exists.");
         }
     }
 
@@ -103,12 +74,19 @@ public class HandleCategories {
      * @return true if the category exists
      *         false if not
      */
-    private boolean existsCategory(String name){
-        for(Category category: mainClass.existentCategories){
-            if(name.equals(category.returnName())){
-                return true;
-            }
-        }
+    public static boolean existsCategory(String name){
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				if (name.equals(rs.getString("CategoryName"))) {
+					return true;
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return false;
     }
 
@@ -116,131 +94,105 @@ public class HandleCategories {
      * List all categories
      */
     private void viewCategories(){
-        String[] categories = properties.getProperty("categories").split(",");
-        for (String category : categories) {
-            // Since in the properties file first item is "0" you don't want to print that
-            if(!category.equals("0")) System.out.println(category.split("-")[0]); // print just the name
-        }
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				int id = rs.getInt("CategoryID");
+				String name = rs.getString("CategoryName");
+				int budget = rs.getInt("Budget");
+				int expenditure = rs.getInt("Expenditure");
+				
+				System.out.format("%s. Category Name = %s, Budget = £%s, Expenditure = £%s\n", id, name, budget, expenditure);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public static void outputCategoryNames() {
+    	ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				System.out.println(rs.getString("CategoryName"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     /**
      * Edit the details of a category (name or budget)
+     * @throws IOException 
+     * @throws NumberFormatException 
      */
-    private void editDetails(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Current categories");
+    private void editDetails() throws NumberFormatException, IOException{
         viewCategories();
-        String value = scanner.nextLine();
-        // cannot edit "Unknown"
-        if(value.equals("Unknown")){
-            System.out.println("There are no details for this category");
-            return;
-        }
-        // find the category object in the array list
-        Category categoryToEdit = null;
-        for(Category category: mainClass.existentCategories){
-            if(value.equals(category.returnName())){
-                categoryToEdit = category;
-                break;
-            }
-        }
-        // Check that it was found
-        if(categoryToEdit != null){
-            System.out.println("Input 1 to edit the name\n" + "Input 2 to edit the budget\n");
-            int option = scanner.nextInt();
-            scanner.nextLine();
-            switch (option){
-                case 1:
-                    System.out.println("Enter the new name of the category: ");
-                    String newName = scanner.nextLine();
-                    String oldName = categoryToEdit.returnName();
-                    if(existsCategory(newName)){
-                        System.out.println("A category with this name already exists so we can't edit the name.");
-                        return;
-                    }
-                    // update records for both purchases and categories in the properties file
-                    categoryToEdit.changeCategoryName(newName);
-                    properties.setProperty("categories", properties.
-                            getProperty("categories").replaceAll(oldName, newName));
-                    properties.setProperty("purchases", properties.getProperty("purchases").
-                            replaceAll(oldName, newName));
-                    return;
-                case 2:
-                    System.out.println("Enter the new budget: ");
-                    double newBudget = scanner.nextDouble();
-                    double oldBudget = categoryToEdit.getBudget();
-                    categoryToEdit.newBudget(newBudget);
-                    // update records for the budget
-                    System.out.println(categoryToEdit.returnName() + "-" +  oldBudget);
-                    properties.setProperty("categories", properties.getProperty("categories").
-                            replaceAll(categoryToEdit.returnName() + "-" + oldBudget,
-                                    categoryToEdit.returnName() + "-" + newBudget));
-                    return;
-                default:
-                    System.out.println("Invalid option");
-            }
-        }
-        else{
-            System.out.println("Couldn't find the category");
-        }
-    }
-
-    /**
-     * See details of a category
-     */
-    private void seeDetails(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Current categories");
-        viewCategories();
-        String value = scanner.nextLine();
-        // Unknown has no details
-        if(value.equals("Unknown")){
-            System.out.println("There are no details about this category");
-            return;
-        }
-        // find the category object in the array list and print the details
-        for(Category category: mainClass.existentCategories){
-            if(value.equals(category.returnName())){
-                System.out.println("Budget set for " + value + ": " + category.getBudget());
-                System.out.println("Total expenditure for " + value + ": " + category.getTotalAmountSpent());
+    	System.out.println("Please enter a category number to amend");
+        String value = App.userIn.readLine();
+        if (!Validation.isInteger(value)) { //Recordnumber input validated
+			return;
+		}
+		int recordNumber = Integer.parseInt(value); 
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblCategory", "CategoryID"), recordNumber)) {
+			return;
+		}
+		System.out.println("Would you like to change:\n 1.Category Name\n 2.Budget");
+		String option = App.userIn.readLine();
+		switch (option){
+        case "1":
+            System.out.println("Enter the new name of the category: ");
+            String newName = App.userIn.readLine();
+            
+            if(existsCategory(newName)){
+                System.out.println("A category with this name already exists so we can't edit the name.");
                 return;
             }
-        }
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET CategoryName = '" + newName + "' WHERE CategoryID = " + recordNumber);
+            break;
+        case "2":
+            System.out.println("Enter the new budget: ");
+            double newBudget = Float.parseFloat(App.userIn.readLine());
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Budget = " + newBudget + " WHERE CategoryID = " + recordNumber);
+            break;
+        default:
+            System.out.println("Invalid option");
+    }
     }
 
     /**
      * Remove a certain category from both the properties file and from the array list
      * Update records for all purchases in that category and move them to the Unknown category
+     * @throws IOException 
      */
-    private void removeCategory(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Current categories");
+    private void removeCategory() throws IOException{
         viewCategories();
-        String value = scanner.nextLine();
-        // The preset categories cannot be removed
+        String value = App.userIn.readLine();
+        System.out.println("Please enter a category to be deleted");
         if(value.equals("Unknown") || value.equals("Clothes") ||
                 value.equals("Transport") || value.equals("Groceries")){
             System.out.println("You cannot remove this category");
             return;
         }
-        // find the category object in the array list and remove it as well
-        Category categoryToRemove = null;
-        for(Category category: mainClass.existentCategories){
-            if(value.equals(category.returnName())){
-                categoryToRemove = category;
-                break;
-            }
-        }
-        // update the records
-        if(categoryToRemove != null){
-            properties.setProperty("purchases", properties.getProperty("purchases").
-                    replaceAll(value, "Unknown"));
-            properties.setProperty("categories",properties.getProperty("categories").
-                replaceAll(","+value + "-" + categoryToRemove.getBudget() + "-"
-                        + categoryToRemove.getTotalAmountSpent(),""));
-            mainClass.existentCategories.remove(categoryToRemove);
-        }
-        else System.out.println("Category not found");
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
+		try {
+			while (rs.next()) //Loop through the resultset
+			{
+				String name = rs.getString("CategoryName");
+				int expenditure = rs.getInt("Expenditure");
+				
+				if (name.equals(value)) { //check this works
+					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure + " + expenditure + " WHERE CategoryName = 'Unknown'");
+					RetrieveAndStore.sqlExecute("DELETE FROM tblCategory WHERE CategoryName = '" + value + "'");
+				}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
     }
-
 }

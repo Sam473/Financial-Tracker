@@ -1,8 +1,8 @@
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Scanner;
 
 /**
  * Class which creates a Date (java.util) object
@@ -16,16 +16,18 @@ public class validDate{
     /**
      * Let the user create a date object in the right format (don't check yet for future or past
      * and return the valid date.
+     * @throws IOException
      */
-    public String newDate(){
+    public String newDate() throws IOException {
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
         return assignDate();
     }
 
     /**
      * Let the user input until a valid date is given.
+     * @throws IOException
      */
-    private String assignDate(){
+    private String assignDate() throws IOException{
         while(true){
             String userInput = enterDate();
             if(validFormat(userInput)){
@@ -76,10 +78,10 @@ public class validDate{
     /**
      * Accept input from the user
      * @return String inputted by the user
+     * @throws IOException
      */
-    private String enterDate(){
-        Scanner myObj = new Scanner(System.in);
-        return myObj.nextLine();
+    private String enterDate() throws IOException{
+        return App.userIn.readLine();
     }
 
     /**
@@ -126,8 +128,9 @@ public class validDate{
      * Method accepts input, creates a date object and makes it valid only if it is in the future
      * Good for the future.
      * @return Date object when valid
+     * @throws IOException
      */
-    private Date checkDate(){
+    private Date checkDate() throws IOException{
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
         while(true){
             String userInput = enterDate();
@@ -197,15 +200,5 @@ public class validDate{
                 return date2Year == date1Year && date2Month == date1Month && date2Day > date1Day;
             }
         }
-    }
-
-    /**
-     * Main function for testing only -- created a constructor instead to incorporate the class
-     * with the others
-     * @param args cmd arguments
-     */
-    public static void main(String[] args) {
-        //validDate valid = new validDate();
-        //valid.checkDate();
     }
 }

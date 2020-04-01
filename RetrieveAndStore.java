@@ -73,7 +73,8 @@ public class RetrieveAndStore {
 					max = rs.getInt(columnName);
 				}
 			}
-		} catch (SQLException e) {
+		} catch (SQLException e) { 
+			System.out.println("Unable to take input from console");
 			e.printStackTrace();
 		}
 		return max; 
