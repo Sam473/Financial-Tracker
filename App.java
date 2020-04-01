@@ -29,6 +29,7 @@ public class App {
         userCategories = new HandleCategories();
         running = true;
 		RetrieveAndStore.startDBConnection();
+		savings = new Savings();
 		userIn = new BufferedReader(new InputStreamReader(System.in));
     }
 

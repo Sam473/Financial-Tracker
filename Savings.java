@@ -131,8 +131,9 @@ public class Savings {
                 return;
             }
 
-            RetrieveAndStore.sqlExecute("INSERT INTO tblSavings (SavingsAccountName, SavingsGoal, CurrentSavings, " +
-                    "MonthlyContribution, DateCreated, DateProjected) VALUES ('" + name + "', " + goal + ", " +
+            RetrieveAndStore.sqlExecute("INSERT INTO tblSavings (ID, SavingsAccountName, SavingsGoal, CurrentSavings, " +
+                    "MonthlyContribution, DateCreated, DateProjected) VALUES ("
+                            + (RetrieveAndStore.maxID("tblSavings", "ID") + 1) + ", '" + name + "', " + goal + ", " +
                     startingAmount + ", " + monthlyContribution + ", '"  + today + "', '" + dateToAchieve + "')");
 
             rowNumberUpdater("tblSavings","ID");
@@ -207,29 +208,29 @@ public class Savings {
         try {
             ResultSetMetaData rsmd = rs.getMetaData();
             System.out.println("Great, which entry would you liked to update?");
-            for (int i = 1; i < rsmd.getColumnCount(); i++) {
-                System.out.println(String.format("%d: %s", i, rsmd.getColumnName(i)));
+            for (int i = 2; i <= rsmd.getColumnCount(); i++) {
+                System.out.println(String.format("%d: %s", i-1, rsmd.getColumnName(i)));
             }
 
-            int columnInt = scanner.nextInt();
+            int columnInt = scanner.nextInt()+1;
             if (!Validation.isRangeValid(1, rsmd.getColumnCount()-1, columnInt)) return;
             scanner.nextLine();
             String columnName = rsmd.getColumnName(columnInt);
             System.out.println("Please input a new value for " + columnName);
 
-            if (columnInt>=4) {
+            if (3<=columnInt && columnInt<=5) {
                 int newValue = scanner.nextInt();
                 scanner.nextLine();
                 RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d", "tblSavings",
                         columnName, newValue, "ID", poolID));
-            } else if (columnInt == 2 || columnInt == 3){ // for date created
+            } else if (columnInt == 6 || columnInt == 7){ // for date created
                 String newValue = scanner.nextLine();
                 String today = Instant.now().toString();
                 today = today.substring(8,10) + "/" + today.substring(5,7) + "/" + today.substring(0,4);
-                if(columnInt == 2 && validDate.validFormat(newValue) && validDate.compareStringDates(today, newValue, true)){
+                if(columnInt == 6 && validDate.validFormat(newValue) && validDate.compareStringDates(today, newValue, true)){
                     RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
                             columnName, newValue, "ID", poolID));
-                } else if(columnInt == 3 && validDate.validFormat(newValue) && validDate.compareStringDates(today, newValue)){
+                } else if(columnInt == 7 && validDate.validFormat(newValue) && validDate.compareStringDates(today, newValue)){
                     RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
                             columnName, newValue, "ID", poolID));
                 }
@@ -247,9 +248,9 @@ public class Savings {
     public void removeSavingPool(){
         printAllSavingPools();
         System.out.println("Please enter the ID number of the Pool you would like to delete:");
-        int poolID = scanner.nextInt();
+        int poolID = scanner.nextInt()-1;
         scanner.nextLine();
-        if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+        if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
         RetrieveAndStore.sqlExecute(String.format("DELETE FROM %s WHERE %s = %d", "tblSavings", "ID", poolID));
         rowNumberUpdater("tblSavings", "ID");
         System.out.println("Done, its deleted, gone forever, turned to smithereens, never to be seen again...");
