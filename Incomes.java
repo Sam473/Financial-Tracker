@@ -3,13 +3,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Incomes {
-    private boolean running;
 
     /**
-     * will ask for which option on
+     * Presents users with option and calls correct method based on input
      */
     public void mainMenu(){
-    	running = true;
+    	boolean running = true;
     	while (running) {
     		System.out.println("Please select an option by using the character in brackets:\n" +
     				"1. Add new income\n" +
@@ -19,7 +18,23 @@ public class Incomes {
     				"5. Return to main menu");
     		try {
     			String input = App.userIn.readLine();
-    			System.out.println(inputChecker(input));
+                switch (input) {
+                    case "1":
+                        addIncome();
+                    case "2":
+                        viewIncomes();
+                    case "3":
+                        totalIncome();
+                    case "4":
+                        System.out.println("Please enter the income you would like to remove (exactly as it appears)");
+                        removeIncome();
+                    case "5":
+                        running = false;
+                        System.out.println("Exiting to Main Menu...\n\n");
+                    default:
+                        System.out.println("Not an option. Choose again");
+
+                }
     		} catch(IOException e) {
     			e.printStackTrace();
     			System.out.println("Unable to take input from console");
@@ -27,35 +42,6 @@ public class Incomes {
     	}
     }
 
-    /**
-     * takes input from main menu and calls correct method
-     * @param input their choice from main menu options
-     * @return Success/failure message
-     * @throws IOException
-     */
-    private String inputChecker(String input) throws IOException {
-        switch (input) {
-        case "1":
-            addIncome();
-            return "";
-        case "2":
-            viewIncomes();
-            return "";
-        case "3":
-            totalIncome();
-            return "";
-        case "4":
-            System.out.println("Please enter the income you would like to remove (exactly as it appears)");
-            removeIncome();
-            return "";
-        case "5":
-            running = false;
-            return "Exiting to Main Menu...\n\n";
-        default:
-            return "Not an option. Choose again";
-
-        }
-    }
 
     /**
      * will sum all incomes
