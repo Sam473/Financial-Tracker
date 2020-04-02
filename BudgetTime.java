@@ -114,7 +114,7 @@ public class BudgetTime {
 		case "2":
 			int days = timeInput();
 			RetrieveAndStore
-					.sqlExecute("UPDATE tblBudget SET NumberOfDays = " + days + "' WHERE BudgetID = " + recordNumber);
+					.sqlExecute("UPDATE tblBudget SET NumberOfDays = " + days + " WHERE BudgetID = " + recordNumber);
 			break;
 		default:
 			System.out.println("Not an option, try again"); // Filters out invalid input
