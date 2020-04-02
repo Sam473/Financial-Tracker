@@ -6,11 +6,11 @@ import java.io.IOException;
  */
 public class Date {
     //declaring fields
-    private int day, month, year;
+    private static int day, month, year;
 
     /**
      * Initialize the Date and make the user input it
-     * @throws IOException 
+     * @throws IOException
      */
     public Date() throws IOException {
         selectDay();
@@ -20,7 +20,7 @@ public class Date {
 
     /**
      * Input the day -- not done need to check against weird input (i.e the 40th)
-     * @throws IOException 
+     * @throws IOException
      */
     private void selectDay() throws IOException{
         System.out.println("Please input a day for your purchase");
@@ -35,7 +35,7 @@ public class Date {
 
     /**
      * Input the month -- not done need to check against weird input (i.e. the 13th)
-     * @throws IOException 
+     * @throws IOException
      */
     private void selectMonth() throws IOException{
         System.out.println("Please input the number of the month.");
@@ -50,7 +50,7 @@ public class Date {
 
     /**
      * Input the year -- not done need to check against weird year (i.e. -2000)
-     * @throws IOException 
+     * @throws IOException
      */
     private void selectYear() throws IOException{
         System.out.println("Please input the number of the year.");
@@ -63,12 +63,25 @@ public class Date {
         }
     }
 
+    public static String addMonths(String originalDate, int monthsToAdd){
+        String currentDay = originalDate.substring(0,2);
+        int currentMonth = Integer.parseInt(originalDate.substring(3,5));
+        int currentYear = Integer.parseInt(originalDate.substring(6));
+        int newMonth = currentMonth + monthsToAdd;
+        while (newMonth > 12) {
+            newMonth -= 12;
+            currentYear++;
+        }
+        return currentDay + "/" + newMonth + "/" + currentYear;
+
+    }
+
     /**
      * Get the date in a string form
      * @return String in format dd.mm.yyyy
      */
-    public String getDate(){
-        return String.valueOf(day) + '.' + (month) + '.' + (year);
+    public static String getTodayDate(){
+        return String.valueOf(day) + '/' + (month) + '/' + (year);
     }
 
 }

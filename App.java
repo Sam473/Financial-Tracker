@@ -13,9 +13,10 @@ public class App {
     BudgetTime userBudget;
     UserEntries userEntries;
     HandleCategories userCategories;
+    Savings savings;
     private boolean running;
     public static BufferedReader userIn; //Buffered reader declared to take user input within the project
-    
+
     /**
      * Constructor -- creates preset Categories and adds them
      *             -- creates the objects for handling each menu
@@ -28,17 +29,18 @@ public class App {
         userCategories = new HandleCategories();
         running = true;
 		RetrieveAndStore.startDBConnection();
+		savings = new Savings();
 		userIn = new BufferedReader(new InputStreamReader(System.in));
     }
-    
+
     /**
      * Main menu of the main class
      * Display until user exits the program
      */
     private void mainMenu() {
         while (running) {
+            System.out.println("Please choose an option from the following:");
             System.out.println(printMainMenu());
-            System.out.println("Going to: ");
             try {
 				handleMainMenuInput(userIn.readLine());
 			} catch (IOException e) { //Catches exceptions with reading console inputs
@@ -56,16 +58,18 @@ public class App {
                 "3. Manage incomes\n" +
                 "4. Manage recurring outgoings\n" +
                 "5. Manage budget\n" +
-              	"6. Request data\n" +
-                "7. Exit";
+                "6. Manage Savings Pools\n" +
+              	"7. Request data\n" +
+                "8. Exit";
     }
 
     /**
      * Accept input from the user and handle the option accordingly
      * @param input option entered by the user
-     * @throws IOException 
+     * @throws IOException
      */
-    private void handleMainMenuInput(String input) throws IOException{
+    private void handleMainMenuInput(String input) throws IOException {
+        System.out.print("\nGoing to: ");
         switch (input) {
             case "1":
                 System.out.println("Purchases\n\n");
@@ -87,11 +91,15 @@ public class App {
                 System.out.println("Budgets");
                 userBudget.mainMenu();
                 break;
-          case "6":
-            	RequestData data = new RequestData();
-                data.saveDataToDesktop();
+            case "6":
+                System.out.println("Savings Pools");
+                savings.mainMenu();
                 break;
             case "7":
+                RequestData data = new RequestData();
+                data.saveDataToDesktop();
+                break;
+            case "8":
             	System.out.println("Thank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();

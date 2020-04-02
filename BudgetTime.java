@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 /**
  * Class to take Budget input and store it
- * 
+ *
  * @author Sam
  */
 
@@ -12,7 +12,7 @@ public class BudgetTime {
 
 	/**
 	 * Set recurring budget over a time period
-	 * 
+	 *
 	 * @throws IOException Handled in main along with other IO exceptions to reduce
 	 *                     error handling code
 	 */
@@ -24,17 +24,17 @@ public class BudgetTime {
 		int budgetAmount = 0; // Variable to hold the budget before it is stored
 		String input;
 
-		System.out.println("Please enter a budget (£) for the selected time period");
+		System.out.println("Please enter a budget (Â£) for the selected time period");
 		input = App.userIn.readLine();
 		if (!Validation.isInteger(input)) {
 			return;
 		}
 		budgetAmount = Integer.parseInt(input);
 
-		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES (" + budgetAmount + ", "
-				+ numberOfDays + ")");
+		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES ("
+				+ budgetAmount + ", " + numberOfDays + ")");
 		// Write SQL statement here then pass to method
-		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays + " days!");
+		System.out.println("Success a budget has been set for Â£" + budgetAmount + " every " + numberOfDays + " days!");
 	}
 
 	/**
@@ -51,7 +51,7 @@ public class BudgetTime {
 				int days = rs.getInt("NumberOfDays");
 
 				// print the results
-				System.out.format("%s. Budget amount = £%s, Number of days = %s\n", id, budget, days);
+				System.out.format("%s. Budget amount = Â£%s, Number of days = %s\n", id, budget, days);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -61,7 +61,7 @@ public class BudgetTime {
 
 	/**
 	 * Delete a stored budget
-	 * 
+	 *
 	 * @throws IOException Handled in main along with other IO exceptions to reduce
 	 *                     error handling code
 	 */
@@ -82,7 +82,7 @@ public class BudgetTime {
 
 	/**
 	 * Amend a stored budget
-	 * 
+	 *
 	 * @throws IOException Handled in main along with other IO exceptions to reduce
 	 *                     error handling code
 	 */
@@ -102,7 +102,7 @@ public class BudgetTime {
 		input = App.userIn.readLine();
 		switch (input) {
 		case "1": // Switch statement to deal with both cases of amendments
-			System.out.println("Please enter an amount (£)");
+			System.out.println("Please enter an amount (Â£)");
 			input = App.userIn.readLine();
 			if (!Validation.isInteger(input)) {
 				return;
@@ -123,7 +123,7 @@ public class BudgetTime {
 
 	/**
 	 * Take input of time period and convert to days
-	 * 
+	 *
 	 * @return time period for goal in days
 	 * @throws IOException Handled in main along with other IO exceptions to reduce
 	 *                     error handling code
@@ -166,7 +166,7 @@ public class BudgetTime {
 	/**
 	 * Called from the main program to give user budget options Handles all
 	 * IOExceptions thrown at other points in class
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	public void mainMenu() throws IOException {

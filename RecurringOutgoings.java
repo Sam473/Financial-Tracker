@@ -8,7 +8,7 @@ public class RecurringOutgoings {
     /**
      * will ask for which option on
      * takes input from main menu and calls correct method
-     * @throws IOException 
+     * @throws IOException
      */
     public void mainMenu() throws IOException {
         boolean running = true;
@@ -29,7 +29,7 @@ public class RecurringOutgoings {
                 viewOutgoings();
                 break;
             case "3":
-            	System.out.println("Your total outgoings:\n£" + totalOutgoings());
+            	System.out.println("Your total outgoings:\nï¿½" + totalOutgoings());
             	break;
             case "4":
                 removeOutgoing();
@@ -76,7 +76,7 @@ public class RecurringOutgoings {
 				float amount = rs.getInt("OutgoingAmount");
 
 				// print the results
-				System.out.format("%s. Name = %s, Amount = £%s\n", id, name, amount);
+				System.out.format("%s. Name = %s, Amount = ï¿½%s\n", id, name, amount);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -87,18 +87,18 @@ public class RecurringOutgoings {
 
     /**
      * will add an outgoing to the outgoings in properties file
-     * @throws IOException 
-     * @throws NumberFormatException 
+     * @throws IOException
+     * @throws NumberFormatException
      */
     private void addOutgoing() throws NumberFormatException, IOException {
         System.out.println("How much will you be paying per month?");
         float amount = Float.parseFloat(App.userIn.readLine());
         System.out.println("What is the name of this payment?");
         String name = App.userIn.readLine();
-        
+
         RetrieveAndStore.sqlExecute("INSERT INTO tblOutgoings (OutgoingName, OutgoingAmount) VALUES ('" + name + "', "
 				+ amount + ")");
-        
+
     }
 
     private void removeOutgoing() throws IOException {

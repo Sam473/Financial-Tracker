@@ -3,13 +3,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Incomes {
-    private boolean running;
-    
+
     /**
-     * will ask for which option on
+     * Presents users with option and calls correct method based on input
      */
     public void mainMenu(){
-    	running = true;
+    	boolean running = true;
     	while (running) {
     		System.out.println("Please select an option by using the character in brackets:\n" +
     				"1. Add new income\n" +
@@ -19,43 +18,30 @@ public class Incomes {
     				"5. Return to main menu");
     		try {
     			String input = App.userIn.readLine();
-    			System.out.println(inputChecker(input));
+                switch (input) {
+                    case "1":
+                        addIncome();
+                    case "2":
+                        viewIncomes();
+                    case "3":
+                        totalIncome();
+                    case "4":
+                        System.out.println("Please enter the income you would like to remove (exactly as it appears)");
+                        removeIncome();
+                    case "5":
+                        running = false;
+                        System.out.println("Exiting to Main Menu...\n\n");
+                    default:
+                        System.out.println("Not an option. Choose again");
+
+                }
     		} catch(IOException e) {
-    			e.printStackTrace(); 
+    			e.printStackTrace();
     			System.out.println("Unable to take input from console");
     		}
     	}
     }
 
-    /**
-     * takes input from main menu and calls correct method
-     * @param input their choice from main menu options
-     * @return Success/failure message
-     * @throws IOException
-     */
-    private String inputChecker(String input) throws IOException {
-    		switch (input) {
-    		case "1":
-    			addIncome();
-    			return "";
-    		case "2":
-    			viewIncomes();
-    			return "";
-    		case "3":
-    			totalIncome();
-    			return "";
-    		case "4":
-    			System.out.println("Please enter the income you would like to remove (exactly as it appears)");
-    			removeIncome();
-    			return "";
-    		case "5":
-    			running = false;
-    			return "Exiting to Main Menu...\n\n";
-    		default:
-    			return "Not an option. Choose again";
-
-    		}
-    }
 
     /**
      * will sum all incomes
@@ -65,12 +51,12 @@ public class Incomes {
     	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
 		try {
 			float incomeTotal = 0;
-			
+
 			while (rs.next()) //Loop through the resultset to sum total income
 			{
 				incomeTotal += rs.getFloat("MonthlySalary");
 			}
-			
+
 			// print the total income
 			System.out.format("Total monthly income = %.2f\n", incomeTotal);
 		} catch (SQLException e) {
@@ -89,7 +75,7 @@ public class Incomes {
 				int monthlyIncome = rs.getInt("MonthlySalary");
 
 				// print the results
-				System.out.format("%s. Monthly Salary = £%s\n", id, monthlyIncome);
+				System.out.format("%s. Monthly Salary = ï¿½%s\n", id, monthlyIncome);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -100,7 +86,7 @@ public class Incomes {
     /**
      * Takes an input on the frequency of the payment and subsequent inputs to calculate monthly income
      * Will add income stream to the properties file
-     * @throws IOException 
+     * @throws IOException
      *
      */
     private void addIncome() throws IOException {
@@ -154,7 +140,7 @@ public class Incomes {
                     frequency = App.userIn.readLine();
             }
         }
-        
+
         //Add the record to the database
 		RetrieveAndStore.sqlExecute("INSERT INTO tblIncomes (MonthlySalary) VALUES (" + monthlySalary + ")");
     }
@@ -174,6 +160,6 @@ public class Incomes {
 			return;
 		}
 		RetrieveAndStore.sqlExecute("DELETE FROM tblIncomes WHERE IncomeID = '" + input + "'"); //Call method to execute deletion
-		System.out.format("Record %s deleted successfully\n", input); //Tell the user record has been removed		
+		System.out.format("Record %s deleted successfully\n", input); //Tell the user record has been removed
     }
 }
