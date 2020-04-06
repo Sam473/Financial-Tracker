@@ -96,6 +96,7 @@ public class App {
                 savings.mainMenu();
                 break;
             case "7":
+            	System.out.println("Request Data\n\n");
                 RequestData data = new RequestData();
                 data.saveDataToDesktop();
                 break;
