@@ -63,7 +63,20 @@ public class UserEntries {
         	date = new validDate();
         	
         	System.out.println("Please type a amount for the purchase");
-            float amount = Float.parseFloat(App.userIn.readLine());
+        	String amountString = App.userIn.readLine();
+        	double amount;
+            if(!Validation.isDouble(amountString) || (amount = Double.parseDouble(amountString)) <= 0) {
+                System.out.println("Invalid amount given\n\n");
+                return;
+            }
+
+            if (amountString.contains(".")) {
+                int decimalPos = amountString.indexOf('.');
+                if ((amountString.length() - 1) - decimalPos > 2) {
+                    System.out.println("Invalid number, too precise\n\n");
+                    return;
+                }
+            }
         	
             System.out.println("Please type a level of guilt for the purchase");
             String guilt = App.userIn.readLine();
@@ -94,7 +107,7 @@ public class UserEntries {
 				int amount = rs.getInt("PurchaseAmount");
 				int guilt = rs.getInt("GuiltyLevel");
 				
-				System.out.format("%s. Date = %s, Amount = £%s, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
+				System.out.format("%s. Date = %s, Amount = Â£%s, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

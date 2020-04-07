@@ -29,7 +29,7 @@ public class RecurringOutgoings {
                 viewOutgoings();
                 break;
             case "3":
-            	System.out.println("Your total outgoings:\n�" + totalOutgoings());
+            	System.out.println("Your total outgoings:\n£" + totalOutgoings());
             	break;
             case "4":
                 removeOutgoing();
@@ -50,7 +50,7 @@ public class RecurringOutgoings {
      * will sum all outgoings
      * @return sum of all outgoings
      */
-    private float totalOutgoings()  {
+    public float totalOutgoings()  {
     	ResultSet rs = RetrieveAndStore.readAllRecords("tblOutgoings");
     	float total = 0;
 		try {
@@ -76,7 +76,7 @@ public class RecurringOutgoings {
 				float amount = rs.getInt("OutgoingAmount");
 
 				// print the results
-				System.out.format("%s. Name = %s, Amount = �%s\n", id, name, amount);
+				System.out.format("%s. Name = %s, Amount = £%s\n", id, name, amount);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -92,7 +92,20 @@ public class RecurringOutgoings {
      */
     private void addOutgoing() throws NumberFormatException, IOException {
         System.out.println("How much will you be paying per month?");
-        float amount = Float.parseFloat(App.userIn.readLine());
+        String amountString = App.userIn.readLine();
+        double amount;
+        if(!Validation.isDouble(amountString) || (amount = Double.parseDouble(amountString)) <= 0) {
+            System.out.println("Invalid amount given\n\n");
+            return;
+        }
+
+        if (amountString.contains(".")) {
+            int decimalPos = amountString.indexOf('.');
+            if ((amountString.length() - 1) - decimalPos > 2) {
+                System.out.println("Invalid number, too precise\n\n");
+                return;
+            }
+        }
         System.out.println("What is the name of this payment?");
         String name = App.userIn.readLine();
 

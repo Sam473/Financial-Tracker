@@ -21,15 +21,22 @@ public class BudgetTime {
 		if (numberOfDays == 0) {
 			return; // Quit if time input failed
 		}
-		int budgetAmount = 0; // Variable to hold the budget before it is stored
-		String input;
 
 		System.out.println("Please enter a budget (£) for the selected time period");
-		input = App.userIn.readLine();
-		if (!Validation.isInteger(input)) {
+		String amountString = App.userIn.readLine();
+		double budgetAmount;
+		if(!Validation.isDouble(amountString) || (budgetAmount = Double.parseDouble(amountString)) <= 0) {
+			System.out.println("Invalid amount given\n\n");
 			return;
 		}
-		budgetAmount = Integer.parseInt(input);
+
+		if (amountString.contains(".")) {
+			int decimalPos = amountString.indexOf('.');
+			if ((amountString.length() - 1) - decimalPos > 2) {
+				System.out.println("Invalid number, too precise\n\n");
+				return;
+			}
+		}
 
 		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES ("
 				+ budgetAmount + ", " + numberOfDays + ")");
@@ -103,11 +110,20 @@ public class BudgetTime {
 		switch (input) {
 		case "1": // Switch statement to deal with both cases of amendments
 			System.out.println("Please enter an amount (£)");
-			input = App.userIn.readLine();
-			if (!Validation.isInteger(input)) {
+			String amountString = App.userIn.readLine();
+			double amount;
+			if(!Validation.isDouble(amountString) || (amount = Double.parseDouble(amountString)) <= 0) {
+				System.out.println("Invalid amount given\n\n");
 				return;
 			}
-			int amount = Integer.parseInt(input);
+
+			if (amountString.contains(".")) {
+				int decimalPos = amountString.indexOf('.');
+				if ((amountString.length() - 1) - decimalPos > 2) {
+					System.out.println("Invalid number, too precise\n\n");
+					return;
+				}
+			}
 			RetrieveAndStore
 					.sqlExecute("UPDATE tblBudget SET BudgetAmount = " + amount + " WHERE BudgetID = " + recordNumber);
 			break;

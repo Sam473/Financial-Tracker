@@ -21,16 +21,21 @@ public class Incomes {
                 switch (input) {
                     case "1":
                         addIncome();
+                        break;
                     case "2":
                         viewIncomes();
+                        break;
                     case "3":
-                        totalIncome();
+                        System.out.println(totalIncome());
+                        break;
                     case "4":
                         System.out.println("Please enter the income you would like to remove (exactly as it appears)");
                         removeIncome();
+                        break;
                     case "5":
                         running = false;
                         System.out.println("Exiting to Main Menu...\n\n");
+                        break;
                     default:
                         System.out.println("Not an option. Choose again");
 
@@ -47,22 +52,22 @@ public class Incomes {
      * will sum all incomes
      * @return sum of all income streams
      */
-    private void totalIncome() { //Loop through and add all incomes then print per month with formatting of string
+    public float totalIncome() { //Loop through and add all incomes then print per month with formatting of string
     	ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+        float incomeTotal = 0;
 		try {
-			float incomeTotal = 0;
 
 			while (rs.next()) //Loop through the resultset to sum total income
 			{
 				incomeTotal += rs.getFloat("MonthlySalary");
 			}
 
-			// print the total income
-			System.out.format("Total monthly income = %.2f\n", incomeTotal);
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        return incomeTotal;
     }
 
     private void viewIncomes() {
@@ -75,7 +80,7 @@ public class Incomes {
 				int monthlyIncome = rs.getInt("MonthlySalary");
 
 				// print the results
-				System.out.format("%s. Monthly Salary = �%s\n", id, monthlyIncome);
+				System.out.format("%s. Monthly Salary = £%s\n", id, monthlyIncome);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -90,8 +95,8 @@ public class Incomes {
      *
      */
     private void addIncome() throws IOException {
-        float customPay;
-        float monthlySalary = 0;
+        double customPay;
+        double monthlySalary = 0;
         boolean validInput = false; //used to verify they choose a frequency option
         System.out.println("How frequently do you get paid?\n" +
                 "(H)ourly\n" +
@@ -106,32 +111,94 @@ public class Incomes {
                 case "h":
                 case "H": //if input is hour
                     System.out.println("How many hours a week?");
-                    int hoursPerWeek = Integer.parseInt(App.userIn.readLine());
+                    String amountString = App.userIn.readLine();
+                    double hoursPerWeek;
+                    if(!Validation.isDouble(amountString) || (hoursPerWeek = Double.parseDouble(amountString)) <= 0) {
+                        System.out.println("Invalid amount given\n\n");
+                        return;
+                    }
+
+                    if (amountString.contains(".")) {
+                        int decimalPos = amountString.indexOf('.');
+                        if ((amountString.length() - 1) - decimalPos > 2) {
+                            System.out.println("Invalid number, too precise\n\n");
+                            return;
+                        }
+                    }
                     System.out.println("How much do you get per hour?");
                     customPay = Float.parseFloat(App.userIn.readLine());
-                    monthlySalary = (customPay*hoursPerWeek*52)/12; //work out hours worked per week then convert to monthly
+                    monthlySalary = ((customPay*hoursPerWeek*52)/12); //work out hours worked per week then convert to monthly
                     break;
                 case "d":
                 case "D":
                     System.out.println("How much do you get per day?");
+                    amountString = App.userIn.readLine();
+                    if(!Validation.isDouble(amountString) || (customPay = Double.parseDouble(amountString)) <= 0) {
+                        System.out.println("Invalid amount given\n\n");
+                        return;
+                    }
+
+                    if (amountString.contains(".")) {
+                        int decimalPos = amountString.indexOf('.');
+                        if ((amountString.length() - 1) - decimalPos > 2) {
+                            System.out.println("Invalid number, too precise\n\n");
+                            return;
+                        }
+                    }
                     customPay = Float.parseFloat(App.userIn.readLine());
                     monthlySalary = (customPay*5*52)/12; //5 days per week then same as weekly pay
                     break;
                 case "w":
                 case "W":
                     System.out.println("How much do you get per week?");
-                    customPay = Float.parseFloat(App.userIn.readLine());
+                    amountString = App.userIn.readLine();
+                    if(!Validation.isDouble(amountString) || (customPay = Double.parseDouble(amountString)) <= 0) {
+                        System.out.println("Invalid amount given\n\n");
+                        return;
+                    }
+
+                    if (amountString.contains(".")) {
+                        int decimalPos = amountString.indexOf('.');
+                        if ((amountString.length() - 1) - decimalPos > 2) {
+                            System.out.println("Invalid number, too precise\n\n");
+                            return;
+                        }
+                    }
                     monthlySalary = (customPay*52)/12; //52 weeks in a year, but / by 12 for per month salary
                     break;
                 case "m":
                 case "M":
                     System.out.println("How much do you get per month?");
-                    monthlySalary = Float.parseFloat(App.userIn.readLine()); //leave it as it is
+                    amountString = App.userIn.readLine();
+                    if(!Validation.isDouble(amountString) || (monthlySalary = Double.parseDouble(amountString)) <= 0) {
+                        System.out.println("Invalid amount given\n\n");
+                        return;
+                    }
+
+                    if (amountString.contains(".")) {
+                        int decimalPos = amountString.indexOf('.');
+                        if ((amountString.length() - 1) - decimalPos > 2) {
+                            System.out.println("Invalid number, too precise\n\n");
+                            return;
+                        }
+                    }
                     break;
                 case "y":
                 case "Y":
                     System.out.println("How much do you get per year?");
-                    customPay = Float.parseFloat(App.userIn.readLine());
+                    amountString = App.userIn.readLine();
+                    if(!Validation.isDouble(amountString) || (customPay = Double.parseDouble(amountString)) <= 0) {
+                        System.out.println("Invalid amount given\n\n");
+                        return;
+                    }
+
+                    if (amountString.contains(".")) {
+                        int decimalPos = amountString.indexOf('.');
+                        if ((amountString.length() - 1) - decimalPos > 2) {
+                            System.out.println("Invalid number, too precise\n\n");
+                            return;
+                        }
+                    }
                     monthlySalary = customPay/12;
                     break;
                 default:

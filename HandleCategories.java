@@ -16,7 +16,7 @@ public class HandleCategories {
     public void mainMenu() throws IOException{
     	boolean running = true;
         while (running){
-            System.out.println("Please select an option by using the character in brackets:\n" +
+            System.out.println("Please select an option by using the number associated with each command:\n" +
                     "1. Add new category\n" +
                     "2. View all categories\n" +
                     "3. Edit details of a category\n" +
@@ -59,7 +59,11 @@ public class HandleCategories {
     private void addCategory() throws IOException {
         System.out.println("Enter the name of the category");
         String category = App.userIn.readLine();
-        
+        if (category.equals("")) {
+            System.out.println("Empty name...\n\n");
+            return;
+        }
+
         if(!existsCategory(category)){
             RetrieveAndStore.sqlExecute("INSERT INTO tblCategory (CategoryName, Budget, Expenditure) VALUES ('" + category + "', 0, 0 )");
             System.out.print("Successfully added the category");
@@ -103,7 +107,7 @@ public class HandleCategories {
 				int budget = rs.getInt("Budget");
 				int expenditure = rs.getInt("Expenditure");
 				
-				System.out.format("%s. Category Name = %s, Budget = £%s, Expenditure = £%s\n", id, name, budget, expenditure);
+				System.out.format("%s. Category Name = %s, Budget = Â£%s, Expenditure = Â£%s\n", id, name, budget, expenditure);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
