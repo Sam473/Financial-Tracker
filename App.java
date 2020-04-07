@@ -111,12 +111,20 @@ public class App {
     }
 
     /**
-     * Main method
+     * Main method - verifies user login then redirects to app
      * @param args cmd line args
      */
     public static void main(String[] args) {
-        App myApp = new App();
-        myApp.mainMenu();
+    	Login login = new Login();
+    	App myApp = new App();
+    	
+    	try {
+			if (login.mainMenu() == true) {
+			    myApp.mainMenu();
+			}
+		} catch (IOException e) { //Catches exception with reading login details
+			e.printStackTrace();
+		}
     }
 
 }
