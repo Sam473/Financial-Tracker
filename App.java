@@ -97,11 +97,13 @@ public class App {
                 savings.mainMenu();
                 break;
             case "7":
+            	  System.out.println("Request Data\n\n");
                 System.out.println("\rYour disposable income:\n£" + (userIncomes.totalIncome() - userRecOutgoings.totalOutgoings()) + "\n\n");
                 break;
             case "8":
+                System.out.println("Request Data\n\n");
                 RequestData data = new RequestData();
-                data.saveDataToDesktop();
+                data.saveData();
                 break;
             case "9":
             	System.out.println("\rThank you for using the financial budget app");
@@ -114,12 +116,20 @@ public class App {
     }
 
     /**
-     * Main method
+     * Main method - verifies user login then redirects to app
      * @param args cmd line args
      */
     public static void main(String[] args) {
-        App myApp = new App();
-        myApp.mainMenu();
+    	Login login = new Login();
+    	App myApp = new App();
+    	
+    	try {
+			if (login.mainMenu() == true) { //if they login they are allowed access to app
+			    myApp.mainMenu();
+			}
+		} catch (IOException e) { //Catches exception with reading login details
+			e.printStackTrace();
+		}
     }
 
 }
