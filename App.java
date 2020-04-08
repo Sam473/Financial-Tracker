@@ -18,6 +18,7 @@ public class App {
     Savings savings;
     Tips tips;
     private boolean running;
+    private boolean givenTip = false;
     public static BufferedReader userIn; //Buffered reader declared to take user input within the project
 
     /**
@@ -42,11 +43,13 @@ public class App {
      * Display until user exits the program
      */
     private void mainMenu() {
-        giveTip();
         while (running) {
             System.out.println("Please choose an option from the following:");
             System.out.println(printMainMenu());
-            giveTip();
+            if(!givenTip) {
+                giveTip();
+                givenTip = true;
+            }
             try {
 				handleMainMenuInput(userIn.readLine());
 			} catch (IOException e) { //Catches exceptions with reading console inputs
@@ -67,7 +70,8 @@ public class App {
                 "6. Manage Savings Pools\n" +
                 "7. View your disposable income\n" +
               	"8. Request data\n" +
-                "9. Exit";
+                "9. Get a tip or some motivation\n" +
+                "10. Exit";
     }
 
     /**
@@ -112,6 +116,11 @@ public class App {
                 data.saveData();
                 break;
             case "9":
+                System.out.print("\r");
+                giveTip();
+                System.out.println("\n");
+                break;
+            case "10":
             	System.out.println("\rThank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();

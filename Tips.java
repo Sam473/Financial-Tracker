@@ -8,7 +8,6 @@ import java.util.Scanner;
  * @author Luke
  */
 public class Tips {
-    File inputFile;
     Scanner scanner;
 
     /**
