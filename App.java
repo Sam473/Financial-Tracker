@@ -119,7 +119,7 @@ public class App {
     	App myApp = new App();
     	
     	try {
-			if (login.mainMenu() == true) {
+			if (login.mainMenu() == true) { //if they login they are allowed access to app
 			    myApp.mainMenu();
 			}
 		} catch (IOException e) { //Catches exception with reading login details

@@ -1,10 +1,17 @@
 import java.io.IOException;
 import java.nio.file.*;
 
+
+/**
+ * @author Sam
+ *
+ */
 public class RequestData {
-	String desktop = System.getProperty("user.home") + "/Desktop";
-
-
+	/**
+	 * method takes user input of directory and copies the database there with the password. 
+	 * User password still protected as it is hashed at login
+	 * @throws IOException
+	 */
     public void saveDataToDesktop() throws IOException {
         //copy the file to a location decided by the user
     	Path source = Paths.get(System.getProperty("user.dir") + "/ProgramDB.mdb");
