@@ -121,9 +121,12 @@ public class App {
         }
     }
 
+    /**
+     * Will give user a random tip or motivational quote
+     */
     private void giveTip(){
         try {
-            String tipMotivation =  (new Random().nextInt(2) == 0) ?
+            String tipMotivation =  (new Random().nextInt(2) == 0) ? // choose random number out of 1 or 2
                     "TIP: " + tips.getTipMotivation("tip") : tips.getTipMotivation("motivation");
             System.out.println(tipMotivation);
         } catch (FileNotFoundException | NullPointerException e) {
