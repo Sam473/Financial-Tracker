@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 /**
  * Main class of our software
@@ -14,6 +16,7 @@ public class App {
     UserEntries userEntries;
     HandleCategories userCategories;
     Savings savings;
+    Tips tips;
     private boolean running;
     public static BufferedReader userIn; //Buffered reader declared to take user input within the project
 
@@ -31,6 +34,7 @@ public class App {
 		RetrieveAndStore.startDBConnection();
 		savings = new Savings();
 		userIn = new BufferedReader(new InputStreamReader(System.in));
+		tips = new Tips();
     }
 
     /**
@@ -38,9 +42,11 @@ public class App {
      * Display until user exits the program
      */
     private void mainMenu() {
+        giveTip();
         while (running) {
             System.out.println("Please choose an option from the following:");
             System.out.println(printMainMenu());
+            giveTip();
             try {
 				handleMainMenuInput(userIn.readLine());
 			} catch (IOException e) { //Catches exceptions with reading console inputs
@@ -115,6 +121,16 @@ public class App {
         }
     }
 
+    private void giveTip(){
+        try {
+            String tipMotivation =  (new Random().nextInt(2) == 0) ?
+                    "TIP: " + tips.getTipMotivation("tip") : tips.getTipMotivation("motivation");
+            System.out.println(tipMotivation);
+        } catch (FileNotFoundException | NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Main method - verifies user login then redirects to app
      * @param args cmd line args
@@ -124,7 +140,7 @@ public class App {
     	App myApp = new App();
     	
     	try {
-			if (login.mainMenu() == true) { //if they login they are allowed access to app
+			if (login.mainMenu()) { //if they login they are allowed access to app
 			    myApp.mainMenu();
 			}
 		} catch (IOException e) { //Catches exception with reading login details
