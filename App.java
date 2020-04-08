@@ -59,8 +59,9 @@ public class App {
                 "4. Manage recurring outgoings\n" +
                 "5. Manage budget\n" +
                 "6. Manage Savings Pools\n" +
-              	"7. Request data\n" +
-                "8. Exit";
+                "7. View your disposable income\n" +
+              	"8. Request data\n" +
+                "9. Exit";
     }
 
     /**
@@ -96,16 +97,19 @@ public class App {
                 savings.mainMenu();
                 break;
             case "7":
+                System.out.println("\rYour disposable income:\n£" + (userIncomes.totalIncome() - userRecOutgoings.totalOutgoings()) + "\n\n");
+                break;
+            case "8":
                 RequestData data = new RequestData();
                 data.saveDataToDesktop();
                 break;
-            case "8":
-            	System.out.println("Thank you for using the financial budget app");
+            case "9":
+            	System.out.println("\rThank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
                 break;
             default:
-                System.out.println("Not an option, try again");
+                System.out.println("\rNot an option, try again");
         }
     }
 
