@@ -103,7 +103,7 @@ public class App {
             case "8":
                 System.out.println("Request Data\n\n");
                 RequestData data = new RequestData();
-                data.saveDataToDesktop();
+                data.saveData();
                 break;
             case "9":
             	System.out.println("\rThank you for using the financial budget app");

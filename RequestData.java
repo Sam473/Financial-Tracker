@@ -12,7 +12,7 @@ public class RequestData {
 	 * User password still protected as it is hashed at login
 	 * @throws IOException
 	 */
-    public void saveDataToDesktop() throws IOException {
+    public void saveData() throws IOException {
         //copy the file to a location decided by the user
     	Path source = Paths.get(System.getProperty("user.dir") + "/ProgramDB.mdb");
     	System.out.println("Please enter a valid directory for example: C:\\Users\\Public");
