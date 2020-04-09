@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 /**
  * Main class of our software
@@ -14,7 +16,9 @@ public class App {
     UserEntries userEntries;
     HandleCategories userCategories;
     Savings savings;
+    Tips tips;
     private boolean running;
+    private boolean givenTip = false;
     public static BufferedReader userIn; //Buffered reader declared to take user input within the project
 
     /**
@@ -31,6 +35,7 @@ public class App {
 		RetrieveAndStore.startDBConnection();
 		savings = new Savings();
 		userIn = new BufferedReader(new InputStreamReader(System.in));
+		tips = new Tips();
     }
 
     /**
@@ -41,6 +46,10 @@ public class App {
         while (running) {
             System.out.println("Please choose an option from the following:");
             System.out.println(printMainMenu());
+            if(!givenTip) {
+                giveTip();
+                givenTip = true;
+            }
             try {
 				handleMainMenuInput(userIn.readLine());
 			} catch (IOException e) { //Catches exceptions with reading console inputs
@@ -61,7 +70,8 @@ public class App {
                 "6. Manage Savings Pools\n" +
                 "7. View your disposable income\n" +
               	"8. Request data\n" +
-                "9. Exit";
+                "9. Get a tip or some motivation\n" +
+                "10. Exit";
     }
 
     /**
@@ -106,12 +116,30 @@ public class App {
                 data.saveData();
                 break;
             case "9":
+                System.out.print("\r");
+                giveTip();
+                System.out.println("\n");
+                break;
+            case "10":
             	System.out.println("\rThank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
                 break;
             default:
                 System.out.println("\rNot an option, try again");
+        }
+    }
+
+    /**
+     * Will give user a random tip or motivational quote
+     */
+    private void giveTip(){
+        try {
+            String tipMotivation =  (new Random().nextInt(2) == 0) ? // choose random number out of 1 or 2
+                    "TIP: " + tips.getTipMotivation("tip") : tips.getTipMotivation("motivation");
+            System.out.println(tipMotivation);
+        } catch (FileNotFoundException | NullPointerException e) {
+            e.printStackTrace();
         }
     }
 
@@ -124,7 +152,7 @@ public class App {
     	App myApp = new App();
     	
     	try {
-			if (login.mainMenu() == true) { //if they login they are allowed access to app
+			if (login.mainMenu()) { //if they login they are allowed access to app
 			    myApp.mainMenu();
 			}
 		} catch (IOException e) { //Catches exception with reading login details
