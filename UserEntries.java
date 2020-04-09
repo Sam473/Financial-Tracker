@@ -77,6 +77,7 @@ public class UserEntries {
                     return;
                 }
             }
+            System.out.println("You entered: " + amount);
         	
             System.out.println("Please type a level of guilt for the purchase");
             String guilt = App.userIn.readLine();
@@ -104,10 +105,10 @@ public class UserEntries {
 				int id = rs.getInt("PurchaseID");
 				String category = rs.getString("Category");
 				String date = rs.getString("PurchaseDate");
-				int amount = rs.getInt("PurchaseAmount");
+				double amount = rs.getDouble("PurchaseAmount");
 				int guilt = rs.getInt("GuiltyLevel");
 				
-				System.out.format("%s. Date = %s, Amount = £%s, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
+				System.out.format("%s. Date = %s, Amount = £%.2f, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

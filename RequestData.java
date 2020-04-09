@@ -22,7 +22,7 @@ public class RequestData {
             Files.copy(source, target);
             System.out.println("File password is: gfg64%43df3*f\"A");
         } catch (IOException e1) {
-            System.out.println("Please enter a valid directory to save file to");
+            System.out.println("File already exists or path not found");
         }
     }
 }
