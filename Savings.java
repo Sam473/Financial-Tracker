@@ -286,8 +286,10 @@ public class Savings {
 					System.out.println("Not a valid date format");
 					return;
 				}
+				rs.next();
+				for (; rs.getInt("ID") == poolID; rs.next());
 				if(columnInt == 6 && validDate.compareStringDates(today, newValue, true)
-						&& validDate.compareStringDates(newValue, rs.getString("DateProjected"))){
+					&& validDate.compareStringDates(newValue, rs.getString("DateProjected"))){
 					// If they change date created, they can choose today as a date.
 					// No need to let them choose an earlier date but cant be later then when they want it to be done
 					RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
