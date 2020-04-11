@@ -53,6 +53,7 @@ public class UserEntries {
      */
     private void addPurchase() throws IOException{
     	//Output the categories
+    	int guilt = 0;
     	HandleCategories.outputCategoryNames();
     	System.out.println("Please type a category name for the purchase");
         String category = App.userIn.readLine();
@@ -79,8 +80,14 @@ public class UserEntries {
             }
             System.out.println("You entered: " + amount);
         	
-            System.out.println("Please type a level of guilt for the purchase");
-            String guilt = App.userIn.readLine();
+            System.out.println("Please type a level of guilt for the purchase between 1 and 10");
+            String inp = App.userIn.readLine();
+            if (Validation.isInteger(inp)) {
+            	guilt = Integer.parseInt(inp);
+            	if (!Validation.isRangeValid(1, 10, guilt)) {
+            		return;
+            	}
+            }
         	
         	
             RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, Category) VALUES (" + amount + ", '" + date + "', " + guilt + ",'" + category + "')");
