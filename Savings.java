@@ -30,6 +30,9 @@ public class Savings {
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("Unable to take input from console");
+			} catch (SQLException e){
+				e.printStackTrace();
+				System.out.println("Unable to get info from table");
 			}
 		}
 	}
@@ -38,7 +41,7 @@ public class Savings {
 	 * takes input from main menu and calls correct method
 	 * @param input their choice from main menu options
 	 */
-	private void inputChecker(String input) throws IOException{
+	private void inputChecker(String input) throws IOException, SQLException {
 		switch (input) {
 		case "1":
 			newSavingPool();
@@ -73,13 +76,22 @@ public class Savings {
 	 * @throws InputMismatchException security incase they give a int for string, or something similar
 	 * @throws IOException if we cant read from console
 	 */
-	public void newSavingPool() throws InputMismatchException, IOException {
+	public void newSavingPool() throws InputMismatchException, IOException, SQLException {
 		boolean cont = false;
 
 		// Name
 		System.out.println("First, what is the name of the category?");
 		String name = App.userIn.readLine();
+		while(!cont){
+			if(exists(name)){
+				System.out.println("A pool with that name already exists, try another:");
+				name = App.userIn.readLine();
+			} else {
+				cont = true;
+			}
+		}
 
+		cont = false;
 		// Amount they want to save in the new pool
 		System.out.println("Awesome, how much do you want to save? (in £)");
 		String goalString = App.userIn.readLine();
@@ -256,7 +268,7 @@ public class Savings {
 			String columnIntString = App.userIn.readLine();
 			if (!Validation.isInteger(columnIntString)) return;
 			int columnInt = Integer.parseInt(columnIntString)+1;
-			if (!Validation.isRangeValid(1, rsmd.getColumnCount()-1, columnInt)) return;
+			if (!Validation.isRangeValid(2, rsmd.getColumnCount(), columnInt)) return;
 			String columnName = rsmd.getColumnName(columnInt);
 			System.out.println("Please input a new value for " + columnName);
 
@@ -264,28 +276,37 @@ public class Savings {
 				String newValueString = App.userIn.readLine();
 				if (!Validation.isDouble(newValueString)) return;
 				double newValue = Double.parseDouble(newValueString);
-				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d", "tblSavings",
+				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %.2f WHERE %s = %d", "tblSavings",
 						columnName, newValue, "ID", poolID));
 			} else if (columnInt == 6 || columnInt == 7){ // For date created and date they aim to meet their goal - String, but in date format
 				String newValue = App.userIn.readLine();
 				String today = Instant.now().toString();
 				today = today.substring(8,10) + "/" + today.substring(5,7) + "/" + today.substring(0,4);
-				if(columnInt == 6 && validDate.validFormat(newValue)
-						&& validDate.compareStringDates(today, newValue, true)
+				if(!validDate.validFormat(newValue)){
+					System.out.println("Not a valid date format");
+					return;
+				}
+				if(columnInt == 6 && validDate.compareStringDates(today, newValue, true)
 						&& validDate.compareStringDates(newValue, rs.getString("DateProjected"))){
 					// If they change date created, they can choose today as a date.
 					// No need to let them choose an earlier date but cant be later then when they want it to be done
 					RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
 							columnName, newValue, "ID", poolID));
-				} else if(columnInt == 7 && validDate.validFormat(newValue)
-						&& validDate.compareStringDates(today, newValue)
+				} else if(columnInt == 7 && validDate.compareStringDates(today, newValue)
 						&& validDate.compareStringDates(rs.getString("DateCreated"),newValue)){
 					// Check its after today and after the day the pool was created
 					RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %s", "tblSavings",
 							columnName, newValue, "ID", poolID));
+				} else {
+					System.out.println("Invalid Time Frame");
+					return;
 				}
 			}  else { // For everything else (i.e. category name) - String
 				String newValue = App.userIn.readLine();
+				if(exists(newValue)) {
+					System.out.println("A pool with that name already exists.\n");
+					return;
+				}
 				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d", "tblSavings",
 						columnName, newValue, "ID", poolID));
 			}
@@ -312,7 +333,17 @@ public class Savings {
 		System.out.println("Done, its deleted, gone forever, turned to smithereens, never to be seen again...\n\n");
 	}
 
-	/**
+    public boolean exists(String name) throws SQLException {
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
+        int i = 0;
+        while (rs.next()){
+			if(name.equals(rs.getString("SavingsAccountName"))) return true;
+        }
+        return false;
+    }
+
+
+    /**
 	 * Will update all ID's in a given tables column so it counts from 0 to the maximum row number
 	 * CAUTION: will overwrite all data in the column
 	 * @param tableName String, name of table to be edited
