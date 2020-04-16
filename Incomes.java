@@ -15,10 +15,10 @@ public class Incomes {
     				"1. Add new income\n" +
     				"2. View all incomes\n" +
     				"3. View total monthly income\n" +
-    				"4. Remove income\n" +
-    				"5. Return to main menu");
+                    "4. Edit an income\n" +
+    				"5. Remove income\n" +
+    				"6. Return to main menu");
     		try {
-                editIncome();
     			String input = App.userIn.readLine();
                 switch (input) {
                     case "1":
@@ -31,10 +31,13 @@ public class Incomes {
                         System.out.println(totalIncome());
                         break;
                     case "4":
+                        editIncome();
+                        break;
+                    case "5":
                         System.out.println("Please enter the income you would like to remove (exactly as it appears)");
                         removeIncome();
                         break;
-                    case "5":
+                    case "6":
                         running = false;
                         System.out.println("Exiting to Main Menu...\n\n");
                         break;
