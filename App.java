@@ -17,6 +17,7 @@ public class App {
     HandleCategories userCategories;
     Savings savings;
     Tips tips;
+    GenerateAnalysis analysis;
     private boolean running;
     private boolean givenTip = false;
     public static BufferedReader userIn; //Buffered reader declared to take user input within the project
@@ -31,6 +32,7 @@ public class App {
         userBudget = new BudgetTime();
         userEntries = new UserEntries();
         userCategories = new HandleCategories();
+        analysis = new GenerateAnalysis();
         running = true;
 		RetrieveAndStore.startDBConnection();
 		savings = new Savings();
@@ -69,9 +71,10 @@ public class App {
                 "5. Manage budget\n" +
                 "6. Manage Savings Pools\n" +
                 "7. View your disposable income\n" +
-              	"8. Request data\n" +
-                "9. Get a tip or some motivation\n" +
-                "10. Exit";
+                "8. See your progress with graphs\n" +
+              	"9. Request data\n" +
+                "10. Get a tip or some motivation\n" +
+                "11. Exit";
     }
 
     /**
@@ -111,16 +114,20 @@ public class App {
                 System.out.println("\rYour disposable income:\n£" + (userIncomes.totalIncome() - userRecOutgoings.totalOutgoings()) + "\n\n");
                 break;
             case "8":
+                System.out.println("Analysis\n\n");
+                analysis.mainMenu();
+                break;
+            case "9":
                 System.out.println("Request Data\n\n");
                 RequestData data = new RequestData();
                 data.saveData();
                 break;
-            case "9":
+            case "10":
                 System.out.print("\r");
                 giveTip();
                 System.out.println("\n");
                 break;
-            case "10":
+            case "11":
             	System.out.println("\rThank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
