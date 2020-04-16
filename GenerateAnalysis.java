@@ -16,9 +16,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
-//Add some more charts
-//Call a method to delete all charts once program closes for data security
-
 public class GenerateAnalysis {
 	JFrame frame;
 	
@@ -67,7 +64,7 @@ public class GenerateAnalysis {
 		  frame.setVisible(true);
 	}
 	
-	public void purchasesOverTimePeriodBar(int timePerod) {
+	public void purchasesOverTimePeriodBar() {
 		//Need purchases to be implemented with valid dates to make this work
 		//Make work for weekly?, monthly, yearly purchases.
 	}
@@ -107,8 +104,27 @@ DefaultPieDataset dataset = new DefaultPieDataset( );
 	}
 	
 	public void mainMenu () throws IOException {
-		purchaseCategoryPie(); //Categories they spend in
-		regularOutgoingsPie(); //The regular outgoings as a portion such as rent, bills, netflix, ...
-		//purchasesOverTimePeriodBar(1); //Comparison of purchases per unit of time decided by user
+		boolean loop = true;
+		while (loop) {
+			System.out.println(
+					"Would you like a graph of:\n1. Categories of Purchases\n2. Regular Outgoing Amounts\n3. Compare Purchase Amounts over a Time Period\n4. Quit to main menu");
+			String input = App.userIn.readLine();
+
+			switch (input) { // Use user input to decide which action to complete
+			case "1":
+				purchaseCategoryPie(); //Categories they spend in
+				break;
+			case "2":
+				regularOutgoingsPie(); //The regular outgoings as a portion such as rent, bills, netflix, ...
+				break;
+			case "3":
+				purchasesOverTimePeriodBar(); //Comparison of purchases per unit of time decided by user
+				break;
+			case "4":
+				loop = false;
+			default: // Filter out invalid inputs
+				System.out.println("Not an option, try again");
+			}
+		}
     }
 }
