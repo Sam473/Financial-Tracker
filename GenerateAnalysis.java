@@ -1,7 +1,14 @@
+//For sql
 import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+//Imports for image viewing
+import javax.swing.JFrame;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+//Imports for graph production
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
@@ -9,7 +16,6 @@ import org.jfree.data.general.DefaultPieDataset;
 
 //Change this so it works with our data
 //Add some more charts
-//See if i can open the charts in the program for user ease
 //Call a method to delete all charts once program closes for data security
 
 public class GenerateAnalysis {
@@ -36,11 +42,24 @@ public class GenerateAnalysis {
 	       true,
 	       false);
 	       
-	    int width = 640;   /* Width of the image */
-	    int height = 480;  /* Height of the image */ 
-	    File pieChart = new File( "PieChart.jpeg" ); 
+	    int width = 1280;   /* Width of the image */
+	    int height = 720;  /* Height of the image */ 
+	    File pieChart = new File("PieChart.jpeg"); 
 	    ChartUtilities.saveChartAsJPEG(pieChart, chart ,width ,height);
+	    showGraph("PieChart.jpeg");
 	}
+	
+	public void showGraph(String graphfile) {
+		  JFrame frame = new JFrame();
+		  ImageIcon icon = new ImageIcon(graphfile);
+		  JLabel label = new JLabel(icon);
+		  frame.add(label);
+		  frame.setDefaultCloseOperation
+		         (JFrame.EXIT_ON_CLOSE);
+		  frame.pack();
+		  frame.setVisible(true);
+	}
+	
 	
 	public void mainMenu () throws IOException {
 		CategoryPie();
