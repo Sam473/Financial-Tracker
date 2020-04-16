@@ -131,6 +131,7 @@ public class App {
             	System.out.println("\rThank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
+                System.exit(0); //required to close all Jframes
                 break;
             default:
                 System.out.println("\rNot an option, try again");

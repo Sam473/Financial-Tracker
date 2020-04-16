@@ -21,6 +21,7 @@ import org.jfree.data.general.DefaultPieDataset;
 //Call a method to delete all charts once program closes for data security
 
 public class GenerateAnalysis {
+	JFrame frame;
 	
 	public void CategoryPie() throws IOException {
 		DefaultPieDataset dataset = new DefaultPieDataset( );
@@ -57,12 +58,12 @@ public class GenerateAnalysis {
 	}
 	
 	public void showGraph(String graphfile) {
-		  JFrame frame = new JFrame();
+		  frame = new JFrame();
 		  ImageIcon icon = new ImageIcon(graphfile);
 		  JLabel label = new JLabel(icon);
 		  frame.add(label);
 		  frame.setDefaultCloseOperation
-		         (JFrame.EXIT_ON_CLOSE);
+		         (JFrame.HIDE_ON_CLOSE);
 		  frame.pack();
 		  frame.setVisible(true);
 	}
@@ -70,6 +71,5 @@ public class GenerateAnalysis {
 	
 	public void mainMenu () throws IOException {
 		CategoryPie();
-	
     }
 }
