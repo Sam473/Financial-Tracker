@@ -9,9 +9,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 //Imports for graph production
+import java.awt.Font;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 
 //Change this so it works with our data
@@ -41,12 +43,17 @@ public class GenerateAnalysis {
 	       true,             // include legend
 	       true,
 	       false);
-	       
+	    
+	    //Adjust the font size
+	    PiePlot plot = (PiePlot) chart.getPlot();
+	    int fontSize = 30; //the size of the fonts
+	    plot.setLabelFont(new Font("SansSerif", Font.PLAIN, fontSize));
+	    
 	    int width = 1280;   /* Width of the image */
 	    int height = 720;  /* Height of the image */ 
-	    File pieChart = new File("PieChart.jpeg"); 
-	    ChartUtilities.saveChartAsJPEG(pieChart, chart ,width ,height);
-	    showGraph("PieChart.jpeg");
+	    File pieChart = new File("PieChart.png"); 
+	    ChartUtilities.saveChartAsPNG(pieChart, chart ,width ,height);
+	    showGraph("PieChart.png");
 	}
 	
 	public void showGraph(String graphfile) {
