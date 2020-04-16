@@ -239,8 +239,8 @@ public class Incomes {
     private void editIncome() throws SQLException, IOException {
         ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
         while(rs.next()){
-            System.out.println(String.format("\n%d: %s\n£%d\n", rs.getInt("IncomeID"),
-                    rs.getString("IncomeName"), rs.getInt("MonthlySalary")));
+            System.out.println(String.format("\n%d: %s\n£%.2f\n", rs.getInt("IncomeID"),
+                    rs.getString("IncomeName"), rs.getDouble("MonthlySalary")));
         }
         System.out.println("Please enter the ID of the income you wish to update");
         String idString = App.userIn.readLine();
@@ -261,8 +261,8 @@ public class Incomes {
         System.out.println("Please input a new value for " + columnName);
         String newValueString = App.userIn.readLine();
         boolean cont = false;
-        switch (id){
-            case 0:
+        switch (columnInt){
+            case 2:
                 // Name
                 while(!cont){
                     if(RetrieveAndStore.exists("tblIncomes","IncomeName",newValueString)){
@@ -272,11 +272,11 @@ public class Incomes {
                         cont = true;
                     }
                 }
-                RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %s WHERE %s = %d","tblIncomes",columnName,
+                RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d","tblIncomes",columnName,
                         newValueString, "IncomeID", id));
                 System.out.println("Successfully updated field!");
                 break;
-            case 1:
+            case 3:
                 double newAmount;
                 while(!cont){
                     if(!(Validation.isDouble(newValueString))){
