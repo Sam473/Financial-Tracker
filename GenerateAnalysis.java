@@ -230,7 +230,7 @@ public class GenerateAnalysis {
 				break;
 			case "4":
 				loop = false;
-				deleteGraphs();
+				deleteGraphs(); //to delete graphs and protect user data
 				break;
 			default: // Filter out invalid inputs
 				System.out.println("Not an option, try again");
