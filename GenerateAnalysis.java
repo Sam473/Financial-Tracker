@@ -82,7 +82,7 @@ public class GenerateAnalysis {
 
 		switch(input) {
 		case "1":
-			timePeriod = "Weekly"; //Categories they spend in
+			timePeriod = "Last 10 Weeks"; //Categories they spend in
 			break;
 		case "2":
 			timePeriod = "Months of the Year"; //The regular outgoings as a portion such as rent, bills, netflix, ...
@@ -109,9 +109,10 @@ public class GenerateAnalysis {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(date);
 				int week = cal.get(Calendar.WEEK_OF_YEAR);
-
+				
+								
 				switch(timePeriod) {
-				case "Weekly":
+				case "Last 10 Weeks":
 					weeks[week -1] += amount;
 					break;
 				case "Months of the Year":
@@ -133,8 +134,9 @@ public class GenerateAnalysis {
 		}
 
 		switch(timePeriod) {
-		case "Weekly":
-			for (int i = 0; i<weeks.length; i++) {
+		case "Last 10 Weeks":
+			int thisweek = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
+			for (int i = thisweek - 10; i<thisweek; i++) { //wont work at the end of the year but we don't have to care
 				dataset.addValue(weeks[i], "Purchases" , Integer.toString(i + 1));
 			}
 			break;
