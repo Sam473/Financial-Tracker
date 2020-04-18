@@ -17,6 +17,7 @@ public class App {
     HandleCategories userCategories;
     Savings savings;
     Tips tips;
+    GenerateAnalysis analysis;
     private boolean running;
     private boolean givenTip = false;
     public static BufferedReader userIn; //Buffered reader declared to take user input within the project
@@ -31,11 +32,12 @@ public class App {
         userBudget = new BudgetTime();
         userEntries = new UserEntries();
         userCategories = new HandleCategories();
+        analysis = new GenerateAnalysis();
         running = true;
-		RetrieveAndStore.startDBConnection();
-		savings = new Savings();
-		userIn = new BufferedReader(new InputStreamReader(System.in));
-		tips = new Tips();
+        RetrieveAndStore.startDBConnection();
+        savings = new Savings();
+        userIn = new BufferedReader(new InputStreamReader(System.in));
+        tips = new Tips();
     }
 
     /**
@@ -51,10 +53,10 @@ public class App {
                 givenTip = true;
             }
             try {
-				handleMainMenuInput(userIn.readLine());
-			} catch (IOException e) { //Catches exceptions with reading console inputs
-				e.printStackTrace();
-			}
+                handleMainMenuInput(userIn.readLine());
+            } catch (IOException e) { //Catches exceptions with reading console inputs
+                e.printStackTrace();
+            }
         }
     }
 
@@ -69,10 +71,11 @@ public class App {
                 "5. Manage budget\n" +
                 "6. Manage Savings Pools\n" +
                 "7. View your disposable income\n" +
-                "8. View your predicted spending for this month\n" +
-              	"9. Request data\n" +
-                "10. Get a tip or some motivation\n" +
-                "11. Exit";
+                "8. See your progress with graphs\n" +
+                "9. View your predicted spending for this month\n" +
+                "10. Request data\n" +
+                "11. Get a tip or some motivation\n" +
+                "12. Exit";
     }
 
     /**
@@ -83,55 +86,60 @@ public class App {
     private void handleMainMenuInput(String input) throws IOException {
         System.out.print("\nGoing to: ");
         switch (input) {
-            case "1":
-                System.out.println("Purchases\n\n");
-                userEntries.mainMenu();
-                break;
-            case "2":
-                System.out.println("Categories\n\n");
-                userCategories.mainMenu();
-                break;
-            case "3":
-                System.out.println("Incomes\n\n");
-                userIncomes.mainMenu();
-                break;
-            case "4":
-                System.out.println("Recurring Outgoings\n\n");
-                userRecOutgoings.mainMenu();
-                break;
-            case "5":
-                System.out.println("Budgets");
-                userBudget.mainMenu();
-                break;
-            case "6":
-                System.out.println("Savings Pools");
-                savings.mainMenu();
-                break;
-            case "7":
-            	  System.out.println("Request Data\n\n");
-                System.out.println("\rYour disposable income:\n£" + (userIncomes.totalIncome() - userRecOutgoings.totalOutgoings()) + "\n\n");
-                break;
-            case "8":
-                System.out.println("Your predicted spending for this month\n\n");
-                userEntries.estimateSpending();
-                break;
-            case "9":
-                System.out.println("Request Data\n\n");
-                RequestData data = new RequestData();
-                data.saveData();
-                break;
-            case "10":
-                System.out.print("\r");
-                giveTip();
-                System.out.println("\n");
-                break;
-            case "11":
-            	System.out.println("\rThank you for using the financial budget app");
-                running = false;
-                RetrieveAndStore.closeDBConnection();
-                break;
-            default:
-                System.out.println("\rNot an option, try again");
+        case "1":
+            System.out.println("Purchases\n\n");
+            userEntries.mainMenu();
+            break;
+        case "2":
+            System.out.println("Categories\n\n");
+            userCategories.mainMenu();
+            break;
+        case "3":
+            System.out.println("Incomes\n\n");
+            userIncomes.mainMenu();
+            break;
+        case "4":
+            System.out.println("Recurring Outgoings\n\n");
+            userRecOutgoings.mainMenu();
+            break;
+        case "5":
+            System.out.println("Budgets");
+            userBudget.mainMenu();
+            break;
+        case "6":
+            System.out.println("Savings Pools");
+            savings.mainMenu();
+            break;
+        case "7":
+            System.out.println("Request Data\n\n");
+            System.out.println("\rYour disposable income:\n£" + (userIncomes.totalIncome() - userRecOutgoings.totalOutgoings()) + "\n\n");
+            break;
+        case "8":
+            System.out.println("Analysis\n\n");
+            analysis.mainMenu();
+            break;
+        case "9":
+            System.out.println("Your predicted spending for this month\n\n");
+            userEntries.estimateSpending();
+            break;
+        case "10":
+            System.out.println("Request Data\n\n");
+            RequestData data = new RequestData();
+            data.saveData();
+            break;
+        case "11":
+            System.out.print("\r");
+            giveTip();
+            System.out.println("\n");
+            break;
+        case "12":
+            System.out.println("\rThank you for using the financial budget app");
+            running = false;
+            RetrieveAndStore.closeDBConnection();
+            System.exit(0); //required to close all Jframes
+            break;
+        default:
+            System.out.println("\rNot an option, try again");
         }
     }
 
@@ -153,16 +161,16 @@ public class App {
      * @param args cmd line args
      */
     public static void main(String[] args) {
-    	Login login = new Login();
-    	App myApp = new App();
-    	
-    	try {
-			if (login.mainMenu()) { //if they login they are allowed access to app
-			    myApp.mainMenu();
-			}
-		} catch (IOException e) { //Catches exception with reading login details
-			e.printStackTrace();
-		}
+        Login login = new Login();
+        App myApp = new App();
+
+        try {
+            if (login.mainMenu()) { //if they login they are allowed access to app
+                myApp.mainMenu();
+            }
+        } catch (IOException e) { //Catches exception with reading login details
+            e.printStackTrace();
+        }
     }
 
 }
