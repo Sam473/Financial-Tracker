@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 /**
  * Class which handles the purchases (the user entries)
@@ -79,7 +80,9 @@ public class UserEntries {
                 }
             }
             System.out.println("You entered: " + amount);
-        	
+
+            date.newDate();
+
             System.out.println("Please type a level of guilt for the purchase between 1 and 10");
             String inp = App.userIn.readLine();
             if (Validation.isInteger(inp)) {
@@ -90,8 +93,10 @@ public class UserEntries {
             }
         	
         	
-            RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, Category) VALUES (" + amount + ", '" + date + "', " + guilt + ",'" + category + "')");
-            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount + " WHERE CategoryName = '" + category + "'");
+            RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, " +
+                    "Category) VALUES (" + amount + ", '" + date.getDate() + "', " + guilt + ",'" + category + "')");
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount +
+                    " WHERE CategoryName = '" + category + "'");
         } else{
         	System.out.println("This category doesn't exist");
         }
@@ -112,15 +117,73 @@ public class UserEntries {
 				int id = rs.getInt("PurchaseID");
 				String category = rs.getString("Category");
 				String date = rs.getString("PurchaseDate");
+
 				double amount = rs.getDouble("PurchaseAmount");
 				int guilt = rs.getInt("GuiltyLevel");
 				
-				System.out.format("%s. Date = %s, Amount = £%.2f, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
+				System.out.format("%s. Date = %s, Amount = �" + "%.2f, Guilt Level = %s, Category = %s\n", id, date, amount, guilt, category);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+    }
+
+    /**
+     * Method iterates through the result set and looks for the purchases
+     * which have the month identical with the current one and year.
+     * Computes all the expenditure, divides it by the number of days (latest purchase) and then
+     * multiplies by 30 (approximation) to estimate the spending for this month.
+     * NOTE: does not take into account regular outgoings or incomes
+     */
+    public void estimateSpending(){
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblPurchases");
+        try {
+            // get details regarding current month
+            Date today = new Date();
+            String thisMonth = processMonth(today.toString().split(" ")[1]);
+            String year = today.toString().split(" ")[5];
+            double totalAmount = 0;
+            int maxDay = Integer.parseInt(today.toString().split(" ")[2]);
+            while(rs.next()){
+                // check that the purchase is for the current month
+                String date = rs.getString("PurchaseDate");
+                if(date.split("/")[1].equals(thisMonth) && date.split("/")[2].equals(year)){
+                    double amount = rs.getDouble("PurchaseAmount");
+                    String day = date.split("/")[0];
+                    totalAmount += amount;
+                    // update the latest day of purchase
+                    if(Integer.parseInt(day) > maxDay) maxDay = Integer.parseInt(day);
+                }
+            }
+            System.out.format("Estimated is: %.2f\n", totalAmount / maxDay * 30);
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method is the same as the one in validDate class
+     * @param month String representing month to be processed
+     * @return number of the month as a String
+     */
+    private static String processMonth(String month){
+        switch (month){
+            case "Jan": return "01";
+            case "Feb": return "02";
+            case "Mar": return "03";
+            case "Apr": return "04";
+            case "May": return "05";
+            case "Jun": return "06";
+            case "Jul": return "07";
+            case "Aug": return "08";
+            case "Sep": return "09";
+            case "Oct": return "10";
+            case "Nov": return "11";
+            case "Dec": return "12";
+            default:
+                return "";
+        }
     }
 
     /**
