@@ -72,9 +72,10 @@ public class App {
                 "6. Manage Savings Pools\n" +
                 "7. View your disposable income\n" +
                 "8. See your progress with graphs\n" +
-              	"9. Request data\n" +
-                "10. Get a tip or some motivation\n" +
-                "11. Exit";
+                "9. View your predicted spending for the month\n" +
+              	"10. Request data\n" +
+                "11. Get a tip or some motivation\n" +
+                "12. Exit";
     }
 
     /**
@@ -118,16 +119,20 @@ public class App {
                 analysis.mainMenu();
                 break;
             case "9":
+                System.out.println("Your predicted spending for this month\n\n");
+                userEntries.estimateSpending();
+                break;
+            case "10":
                 System.out.println("Request Data\n\n");
                 RequestData data = new RequestData();
                 data.saveData();
                 break;
-            case "10":
+            case "11":
                 System.out.print("\r");
                 giveTip();
                 System.out.println("\n");
                 break;
-            case "11":
+            case "12":
             	System.out.println("\rThank you for using the financial budget app");
                 running = false;
                 RetrieveAndStore.closeDBConnection();
