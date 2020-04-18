@@ -86,7 +86,7 @@ public class UserEntries {
 			System.out.println("You entered: " + amount);
 
 			date.newDate();
-
+      
 			System.out.println("Please type a level of guilt for the purchase between 1 and 10");
 			String inp = App.userIn.readLine();
 			if (Validation.isInteger(inp)) {
@@ -95,7 +95,6 @@ public class UserEntries {
 					return;
 				}
 			}
-
 
 			RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, " +
 					"Category) VALUES (" + amount + ", '" + date.getDate() + "', " + guilt + ",'" + category + "')");
@@ -109,7 +108,7 @@ public class UserEntries {
 		//Ask for purchase details
 		//Put into db table for purchases and table for categories
 	}
-
+  
 	/**
 	 * List all purchases
 	 */
