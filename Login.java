@@ -19,8 +19,8 @@ public class Login {
 		//Boolean value to decide whether to loop through the menu again
 		boolean running = true;
 
-		while (running == true) {
-			System.out.println("Please select an option:\n" + "1. Login\n" + "2. Register\n3. Exit the app\n");
+		while (running) {
+			System.out.println("Please select an option:\n" + "1. Login\n" + "2. Register\n3. Exit the app");
 			String input = App.userIn.readLine();
 
 			switch (input) {
