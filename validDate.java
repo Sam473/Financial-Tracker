@@ -18,21 +18,21 @@ public class validDate{
      * and return the valid date.
      * @throws IOException
      */
-    public String newDate() throws IOException {
+    public void newDate() throws IOException {
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
-        return assignDate();
+        assignDate();
     }
 
     /**
      * Let the user input until a valid date is given.
      * @throws IOException
      */
-    private String assignDate() throws IOException{
+    private void assignDate() throws IOException{
         while(true){
             String userInput = enterDate();
             if(validFormat(userInput)){
                 System.out.println("Date added successfully");
-                return userInput;
+                return;
             }
             else{
                 System.out.println("Either the format is wrong, or the date does not exist, please try again.");
@@ -45,7 +45,7 @@ public class validDate{
      * of the format specified at the beginning of the class
      * @return String in the right format for further processing
      */
-    public static String getDate(){
+    public String getDate(){
         String[] elements = date.toString().split(" ");
         return elements[2] + "/" + processMonth(elements[1]) + "/" + elements[5];
     }
@@ -130,13 +130,13 @@ public class validDate{
      * @return Date object when valid
      * @throws IOException
      */
-    private Date checkDate() throws IOException{
+    public void checkDate() throws IOException{
         System.out.println("Enter a date in 'dd/MM/yyyy' format:");
         while(true){
             String userInput = enterDate();
             if (validFormat(userInput)){
                 if (futureDate()){
-                    return date;
+                    return ;
                 }else{
                     System.out.println("Date entered is in the past.");
                 }

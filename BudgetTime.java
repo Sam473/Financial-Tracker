@@ -38,11 +38,62 @@ public class BudgetTime {
 			}
 		}
 
-		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays) VALUES ("
-				+ budgetAmount + ", " + numberOfDays + ")");
 		// Write SQL statement here then pass to method
-		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays + " days!");
+
+		// Allow for option to select category
+		System.out.println("Do you wish to set this budget for an existent category? (Y)es/(N)o");
+		String option = App.userIn.readLine();
+		String category = "Unknown";
+
+		if(option.toLowerCase().equals("y")){
+			displayCategories();
+			System.out.println("Enter the name of the category: ");
+			category = App.userIn.readLine();
+			while (!exists(category)){
+				System.out.println("This category does not exist, please enter an existent one: ");
+				category = App.userIn.readLine();
+			}
+		}
+
+		RetrieveAndStore.sqlExecute("INSERT INTO tblBudget (BudgetAmount, NumberOfDays, Category) VALUES ("
+				+ budgetAmount + ", " + numberOfDays + ", '" + category + "')");
+		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays +
+				" days in " + category + "!");
 		RetrieveAndStore.rowNumberUpdater("tblBudget","BudgetID");
+	}
+
+	/**
+	 * List all categories existent to let the user choose
+	 */
+	private void displayCategories(){
+		ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
+		try{
+			System.out.println("Please choose a category from the following: ");
+			while (rs.next()){
+				System.out.println(rs.getString("CategoryName"));
+			}
+		}catch (SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Checks if the category typed by the user exists
+	 * @param categoryName String representing category name
+	 * @return true if category exists
+	 * 			false otherwise
+	 */
+	private boolean exists(String categoryName){
+		ResultSet rs = RetrieveAndStore.readAllRecords("tblCategory");
+		try{
+			while(rs.next()){
+				if(rs.getString("CategoryName").equals(categoryName)) return true;
+			}
+			return false;
+		} catch (SQLException e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	/**
@@ -57,9 +108,10 @@ public class BudgetTime {
 				int id = rs.getInt("BudgetID");
 				int budget = rs.getInt("BudgetAmount");
 				int days = rs.getInt("NumberOfDays");
+				String category = rs.getString("Category");
 
 				// print the results
-				System.out.format("%s. Budget amount = £%s, Number of days = %s\n", id, budget, days);
+				System.out.format("%s. Budget amount = £%s, Number of days = %s, Category = %s\n", id, budget, days, category);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -86,7 +138,6 @@ public class BudgetTime {
 		RetrieveAndStore.sqlExecute("DELETE FROM tblBudget WHERE BudgetID = '" + input + "'"); // Call method to execute
 																							   // deletion
 		System.out.format("Record %s deleted successfully\n", input); // Tell the user record has been removed
-		RetrieveAndStore.rowNumberUpdater("tblBudget","BudgetID");
 	}
 
 	/**
@@ -106,7 +157,7 @@ public class BudgetTime {
 		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblBudget", "BudgetID"), recordNumber)) {
 			return;
 		}
-		System.out.println("Would you like to change:\n 1.budget\n 2.timeframe?"); // Find out what the user wants to
+		System.out.println("Would you like to change:\n 1.budget\n 2.time frame?\n 3.category"); // Find out what the user wants to
 																					// amend
 		input = App.userIn.readLine();
 		switch (input) {
@@ -133,6 +184,16 @@ public class BudgetTime {
 			int days = timeInput();
 			RetrieveAndStore
 					.sqlExecute("UPDATE tblBudget SET NumberOfDays = " + days + " WHERE BudgetID = " + recordNumber);
+			break;
+		case "3":
+			displayCategories();
+			String category = App.userIn.readLine();
+			while (!exists(category)){
+				System.out.println("Category does not exist, please enter an existent one.");
+				category = App.userIn.readLine();
+			}
+			RetrieveAndStore
+					.sqlExecute("UPDATE tblBudget SET Category = '" + category + "' WHERE BudgetID = " + recordNumber);
 			break;
 		default:
 			System.out.println("Not an option, try again"); // Filters out invalid input
