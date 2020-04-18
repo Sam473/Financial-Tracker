@@ -42,6 +42,7 @@ public class BudgetTime {
 				+ budgetAmount + ", " + numberOfDays + ")");
 		// Write SQL statement here then pass to method
 		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays + " days!");
+		RetrieveAndStore.rowNumberUpdater("tblBudget","BudgetID");
 	}
 
 	/**
@@ -85,6 +86,7 @@ public class BudgetTime {
 		RetrieveAndStore.sqlExecute("DELETE FROM tblBudget WHERE BudgetID = '" + input + "'"); // Call method to execute
 																							   // deletion
 		System.out.format("Record %s deleted successfully\n", input); // Tell the user record has been removed
+		RetrieveAndStore.rowNumberUpdater("tblBudget","BudgetID");
 	}
 
 	/**

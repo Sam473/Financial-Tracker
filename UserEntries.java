@@ -78,7 +78,6 @@ public class UserEntries {
                     return;
                 }
             }
-            System.out.println("You entered: " + amount);
         	
             System.out.println("Please type a level of guilt for the purchase between 1 and 10");
             String inp = App.userIn.readLine();
@@ -92,6 +91,7 @@ public class UserEntries {
         	
             RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, Category) VALUES (" + amount + ", '" + date + "', " + guilt + ",'" + category + "')");
             RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount + " WHERE CategoryName = '" + category + "'");
+            RetrieveAndStore.rowNumberUpdater("tblPurchases","PurchaseID");
         } else{
         	System.out.println("This category doesn't exist");
         }
@@ -143,7 +143,9 @@ public class UserEntries {
 				}
 				RetrieveAndStore.sqlExecute("DELETE FROM tblPurchases WHERE PurchaseID = '" + value + "'");
 			}
+			RetrieveAndStore.rowNumberUpdater("tblPurchases","PurchaseID");
 			System.out.println("Purchase deleted successfully");
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

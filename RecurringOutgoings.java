@@ -121,6 +121,7 @@ public class RecurringOutgoings {
         RetrieveAndStore.sqlExecute("INSERT INTO tblOutgoings (OutgoingName, OutgoingAmount) VALUES ('" + name + "', "
 				+ amount + ")");
         System.out.println("Successfully added new outgoing\n");
+        RetrieveAndStore.rowNumberUpdater("tblOutgoings","OutgoingID");
 
     }
 
@@ -199,5 +200,6 @@ public class RecurringOutgoings {
 		RetrieveAndStore.sqlExecute("DELETE FROM tblOutgoings WHERE OutgoingID = " + value); // Call method to execute
 																							   // deletion
 		System.out.format("Record %s deleted successfully\n", value); // Tell the user record has been removed
+        RetrieveAndStore.rowNumberUpdater("tblOutgoings","OutgoingID");
     }
 }

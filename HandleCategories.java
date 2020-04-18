@@ -70,6 +70,7 @@ public class HandleCategories {
         } else{
         	System.out.println("This category already exists.");
         }
+        RetrieveAndStore.rowNumberUpdater("tblCategory","CategoryID");
     }
 
     /**
@@ -191,6 +192,7 @@ public class HandleCategories {
 				if (name.equals(value)) { //check this works
 					RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure + " + expenditure + " WHERE CategoryName = 'Unknown'");
 					RetrieveAndStore.sqlExecute("DELETE FROM tblCategory WHERE CategoryName = '" + value + "'");
+                    RetrieveAndStore.rowNumberUpdater("tblCategory","CategoryID");
 				}
 			}
 		} catch (SQLException e) {

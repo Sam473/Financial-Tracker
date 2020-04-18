@@ -232,6 +232,7 @@ public class Incomes {
         //Add the record to the database
 		RetrieveAndStore.sqlExecute("INSERT INTO tblIncomes (MonthlySalary) VALUES (" + monthlySalary + ")");
         RetrieveAndStore.rowNumberUpdater("tblIncomes", "IncomeID");
+        RetrieveAndStore.rowNumberUpdater("tblIncomes","IncomeID");
     }
 
     private void editIncome() throws SQLException, IOException {
@@ -309,6 +310,7 @@ public class Incomes {
 		}
 		RetrieveAndStore.sqlExecute("DELETE FROM tblIncomes WHERE IncomeID = '" + input + "'"); //Call method to execute deletion
 		System.out.format("Record %s deleted successfully\n", input); //Tell the user record has been removed
+        RetrieveAndStore.rowNumberUpdater("tblIncomes","IncomeID");
     }
 }
 
