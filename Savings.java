@@ -209,7 +209,7 @@ public class Savings {
 				double time;
 				double leftToGo = goal-currentSavings; // How far they are from their goal in £
 				// Checks we wont get 0 division and they haven't yet hit their goal
-				if (!(contribution == 0) && currentSavings < goal) {
+				if (contribution != 0 && currentSavings < goal) {
 					// If they'll hit their goal EXACTLY on a payment (extra month needed if they dont)
 					if (leftToGo % contribution == 0) {
 						if ((time = leftToGo / contribution) == 1) {
