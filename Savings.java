@@ -83,7 +83,7 @@ public class Savings {
 		System.out.println("First, what is the name of the category?");
 		String name = App.userIn.readLine();
 		while(!cont){
-			if(exists(name)){
+			if(RetrieveAndStore.exists("tblSavings","SavingsAccountName", name)){
 				System.out.println("A pool with that name already exists, try another:");
 				name = App.userIn.readLine();
 			} else {
@@ -178,7 +178,7 @@ public class Savings {
 
 
 
-		rowNumberUpdater("tblSavings","ID");
+		RetrieveAndStore.rowNumberUpdater("tblSavings","ID");
 		System.out.println("Great stuff, lets get saving!\n\n");
 	}
 
@@ -209,13 +209,13 @@ public class Savings {
 				double time;
 				double leftToGo = goal-currentSavings; // How far they are from their goal in £
 				// Checks we wont get 0 division and they haven't yet hit their goal
-				if (!(contribution == 0) && currentSavings < goal) {
+				if (contribution != 0 && currentSavings < goal) {
 					// If they'll hit their goal EXACTLY on a payment (extra month needed if they dont)
 					if (leftToGo % contribution == 0) {
 						if ((time = leftToGo / contribution) == 1) {
 							projection += "next month! Good Job";
 						} else { // Tells them how long till they hit their goal
-							projection += "in " + (int) time + " months, the " + Date.addMonths(today, (int) time)
+							projection += "in " + (int) time + " months, the " + validDate.addMonths(today, (int) time)
 							+ "\nTIP: Dont worry if that seems like a long time off, with the right bank " +
 							"(and possibly the right investments too!) that time can always be reduced!";
 						}
@@ -223,7 +223,7 @@ public class Savings {
 						if ((time = leftToGo / contribution) < 1) { // Check if they will be overpaying
 							projection += "next month! Good Job";
 						} else { // Tells them how long till they hit their goal
-							projection += "in " + (int) time + " months, the " + Date.addMonths(today, (int) time + 1)
+							projection += "in " + (int) time + " months, the " + validDate.addMonths(today, (int) time + 1)
 							+ "\nTIP: Dont worry if that seems like a long time off, with the right bank " +
 							"(and possibly the right investments too!) that time can always be reduced!";
 						}
@@ -305,7 +305,7 @@ public class Savings {
 				}
 			}  else { // For everything else (i.e. category name) - String
 				String newValue = App.userIn.readLine();
-				if(exists(newValue)) {
+				if(RetrieveAndStore.exists("tblSavings","SavingsAccountName",newValue)) {
 					System.out.println("A pool with that name already exists.\n");
 					return;
 				}
@@ -331,37 +331,8 @@ public class Savings {
 		int poolID = Integer.parseInt(poolIDString)-1;
 		if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
 		RetrieveAndStore.sqlExecute(String.format("DELETE FROM %s WHERE %s = %d", "tblSavings", "ID", poolID));
-		rowNumberUpdater("tblSavings", "ID");
+		RetrieveAndStore.rowNumberUpdater("tblSavings", "ID");
 		System.out.println("Done, its deleted, gone forever, turned to smithereens, never to be seen again...\n\n");
-	}
-
-    public boolean exists(String name) throws SQLException {
-        ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
-        int i = 0;
-        while (rs.next()){
-			if(name.equals(rs.getString("SavingsAccountName"))) return true;
-        }
-        return false;
-    }
-
-
-    /**
-	 * Will update all ID's in a given tables column so it counts from 0 to the maximum row number
-	 * CAUTION: will overwrite all data in the column
-	 * @param tableName String, name of table to be edited
-	 * @param columnName String, name of column to be edited
-	 */
-	public void rowNumberUpdater(String tableName, String columnName){
-		ResultSet rs = RetrieveAndStore.readAllRecords(tableName);
-		int i = 0;
-		try {
-			while(rs.next()){ // Loop through all pools in table
-				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d;", tableName, columnName, i, columnName, rs.getInt(columnName)));
-				++i;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public boolean doesGoalExist(String proposedName) {

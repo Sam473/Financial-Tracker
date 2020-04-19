@@ -27,6 +27,7 @@ public abstract class Validation {
 			System.out.println("Please enter a number");
 			return false;
 		}
+
 	}
 
 	/**

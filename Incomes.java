@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 public class Incomes {
@@ -14,8 +15,9 @@ public class Incomes {
     				"1. Add new income\n" +
     				"2. View all incomes\n" +
     				"3. View total monthly income\n" +
-    				"4. Remove income\n" +
-    				"5. Return to main menu");
+                    "4. Edit an income\n" +
+    				"5. Remove income\n" +
+    				"6. Return to main menu");
     		try {
     			String input = App.userIn.readLine();
                 switch (input) {
@@ -29,10 +31,13 @@ public class Incomes {
                         System.out.println(totalIncome());
                         break;
                     case "4":
+                        editIncome();
+                        break;
+                    case "5":
                         System.out.println("Please enter the income you would like to remove (exactly as it appears)");
                         removeIncome();
                         break;
-                    case "5":
+                    case "6":
                         running = false;
                         System.out.println("Exiting to Main Menu...\n\n");
                         break;
@@ -43,8 +48,11 @@ public class Incomes {
     		} catch(IOException e) {
     			e.printStackTrace();
     			System.out.println("Unable to take input from console");
-    		}
-    	}
+    		} catch (SQLException e) {
+                e.printStackTrace();
+                System.out.println("Error with DB");
+            }
+        }
     }
 
 
@@ -64,7 +72,6 @@ public class Incomes {
 
 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return incomeTotal;
@@ -77,13 +84,14 @@ public class Incomes {
 			{
 				//Store each income record to print
 				int id = rs.getInt("IncomeID");
-				int monthlyIncome = rs.getInt("MonthlySalary");
+				double monthlyIncome = rs.getDouble("MonthlySalary");
+				String name = rs.getString("IncomeName");
 
 				// print the results
-				System.out.format("%s. Monthly Salary = £%s\n", id, monthlyIncome);
+                System.out.println(String.format("\n%d: %s\n£%.2f\n", id,
+                        name, monthlyIncome));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }
@@ -94,7 +102,20 @@ public class Incomes {
      * @throws IOException
      *
      */
-    private void addIncome() throws IOException {
+    private void addIncome() throws IOException, SQLException {
+        // Name
+        boolean cont = false;
+        System.out.println("First, set a name for this category?");
+        String name = App.userIn.readLine();
+        while(!cont){
+            if(RetrieveAndStore.exists("tblIncomes","IncomeName",name)){
+                System.out.println("A pool with that name already exists, try another:");
+                name = App.userIn.readLine();
+            } else {
+                cont = true;
+            }
+        }
+
         double customPay;
         double monthlySalary = 0;
         boolean validInput = false; //used to verify they choose a frequency option
@@ -210,6 +231,67 @@ public class Incomes {
 
         //Add the record to the database
 		RetrieveAndStore.sqlExecute("INSERT INTO tblIncomes (MonthlySalary) VALUES (" + monthlySalary + ")");
+        RetrieveAndStore.rowNumberUpdater("tblIncomes", "IncomeID");
+        RetrieveAndStore.rowNumberUpdater("tblIncomes","IncomeID");
+    }
+
+    private void editIncome() throws SQLException, IOException {
+        ResultSet rs = RetrieveAndStore.readAllRecords("tblIncomes");
+        while(rs.next()){
+            System.out.println(String.format("\n%d: %s\n£%.2f\n", rs.getInt("IncomeID"),
+                    rs.getString("IncomeName"), rs.getDouble("MonthlySalary")));
+        }
+        System.out.println("Please enter the ID of the income you wish to update");
+        String idString = App.userIn.readLine();
+        if(!(Validation.isInteger(idString))) return;
+        int id = Integer.parseInt(idString);
+        if(!Validation.isRangeValid(0,RetrieveAndStore.maxID("tblIncomes","IncomeID"),id)) return;
+        System.out.println("Great, and which field would you like to update?");
+        ResultSetMetaData rsmd = rs.getMetaData();
+        for (int i = 2; i <= rsmd.getColumnCount(); i++) { // Loop through all columns and print column name
+            System.out.println(String.format("%d: %s", i-1, rsmd.getColumnName(i)));
+        }
+        // They choose one of the columns printed above
+        String columnIntString = App.userIn.readLine();
+        if (!Validation.isInteger(columnIntString)) return;
+        int columnInt = Integer.parseInt(columnIntString)+1;
+        if (!Validation.isRangeValid(2, rsmd.getColumnCount(), columnInt)) return;
+        String columnName = rsmd.getColumnName(columnInt);
+        System.out.println("Please input a new value for " + columnName);
+        String newValueString = App.userIn.readLine();
+        boolean cont = false;
+        switch (columnInt){
+            case 2:
+                // Name
+                while(!cont){
+                    if(RetrieveAndStore.exists("tblIncomes","IncomeName",newValueString)){
+                        System.out.println("An income with that name already exists, try another:");
+                        newValueString = App.userIn.readLine();
+                    } else {
+                        cont = true;
+                    }
+                }
+                RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d","tblIncomes",columnName,
+                        newValueString, "IncomeID", id));
+                System.out.println("Successfully updated field!");
+                break;
+            case 3:
+                double newAmount;
+                while(!cont){
+                    if(!(Validation.isDouble(newValueString))){
+                        System.out.println("Invalid amount, try another:");
+                        newValueString = App.userIn.readLine();
+                    } else {
+                        newAmount = Double.parseDouble(newValueString);
+                        cont = true;
+                        RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %.2f WHERE %s = %d","tblIncomes",columnName,
+                                newAmount, "IncomeID", id));
+                    }
+                }
+                System.out.println("Successfully updated field!");
+                break;
+        }
+
     }
 
     /**
@@ -228,5 +310,10 @@ public class Incomes {
 		}
 		RetrieveAndStore.sqlExecute("DELETE FROM tblIncomes WHERE IncomeID = '" + input + "'"); //Call method to execute deletion
 		System.out.format("Record %s deleted successfully\n", input); //Tell the user record has been removed
+        RetrieveAndStore.rowNumberUpdater("tblIncomes","IncomeID");
     }
 }
+
+/* TODO
+    comments
+ */

@@ -79,7 +79,35 @@ public class RetrieveAndStore {
 		}
 		return max; 
 	}
-	
+
+	/**
+	 * Will update all ID's in a given tables column so it counts from 0 to the maximum row number
+	 * CAUTION: will overwrite all data in the column
+	 * @param tableName String, name of table to be edited
+	 * @param columnName String, name of column to be edited
+	 */
+	public static void rowNumberUpdater(String tableName, String columnName){
+		ResultSet rs = RetrieveAndStore.readAllRecords(tableName);
+		int i = 0;
+		try {
+			while(rs.next()){ // Loop through all pools in table
+				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d;", tableName, columnName, i, columnName, rs.getInt(columnName)));
+				++i;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean exists(String tableName, String columnName,String name) throws SQLException {
+		ResultSet rs = RetrieveAndStore.readAllRecords(tableName);
+		int i = 0;
+		while (rs.next()){
+			if(name.equals(rs.getString(columnName))) return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Called from main to connect to the database
 	 */
@@ -91,5 +119,7 @@ public class RetrieveAndStore {
 			e.printStackTrace();
 		}
 	}
+
+
 
 }

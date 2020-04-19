@@ -59,6 +59,7 @@ public class BudgetTime {
 				+ budgetAmount + ", " + numberOfDays + ", '" + category + "')");
 		System.out.println("Success a budget has been set for £" + budgetAmount + " every " + numberOfDays +
 				" days in " + category + "!");
+		RetrieveAndStore.rowNumberUpdater("tblBudget","BudgetID");
 	}
 
 	/**

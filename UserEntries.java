@@ -11,7 +11,7 @@ public class UserEntries {
 	/**
 	 * Prints the option when handling the user's purchases.
 	 * takes input from main menu and calls correct method
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void mainMenu() throws IOException{
 		boolean running = true;
@@ -54,7 +54,7 @@ public class UserEntries {
 	 * Creates a new purchase (user entry) and adds it
 	 * to the properties file
 	 * Also, adds the amount to the total expenditure of a category
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void addPurchase() throws IOException{
 		//Output the categories
@@ -76,17 +76,16 @@ public class UserEntries {
 				return;
 			}
 
-			if (amountString.contains(".")) {
-				int decimalPos = amountString.indexOf('.');
-				if ((amountString.length() - 1) - decimalPos > 2) {
-					System.out.println("Invalid number, too precise\n\n");
-					return;
-				}
-			}
-			System.out.println("You entered: " + amount);
+            if (amountString.contains(".")) {
+                int decimalPos = amountString.indexOf('.');
+                if ((amountString.length() - 1) - decimalPos > 2) {
+                    System.out.println("Invalid number, too precise\n\n");
+                    return;
+                }
+            }
 
-			date.newDate();
-      
+            date.newDate();
+
 			System.out.println("Please type a level of guilt for the purchase between 1 and 10");
 			String inp = App.userIn.readLine();
 			if (Validation.isInteger(inp)) {
@@ -98,8 +97,8 @@ public class UserEntries {
 
 			RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, " +
 					"Category) VALUES (" + amount + ", '" + date.getDate() + "', " + guilt + ",'" + category + "')");
-			RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount +
-					" WHERE CategoryName = '" + category + "'");
+            RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount + " WHERE CategoryName = '" + category + "'");
+            RetrieveAndStore.rowNumberUpdater("tblPurchases","PurchaseID");
 		} else{
 			System.out.println("This category doesn't exist");
 		}
@@ -108,7 +107,7 @@ public class UserEntries {
 		//Ask for purchase details
 		//Put into db table for purchases and table for categories
 	}
-  
+
 	/**
 	 * List all purchases
 	 */
@@ -191,7 +190,7 @@ public class UserEntries {
 	/**
 	 * Remove a certain purchase and the amount from the category
 	 * Update records for the properties file
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void removePurchase() throws IOException{
 		viewPurchases();
@@ -208,7 +207,9 @@ public class UserEntries {
 				}
 				RetrieveAndStore.sqlExecute("DELETE FROM tblPurchases WHERE PurchaseID = '" + value + "'");
 			}
+			RetrieveAndStore.rowNumberUpdater("tblPurchases","PurchaseID");
 			System.out.println("Purchase deleted successfully");
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -235,15 +236,15 @@ public class UserEntries {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//User decides what to sort by		
+
+		//User decides what to sort by
 		int sortBy = 1;
     	System.out.println("What would you like to sort by:\n" +
                 "1. Level of guilt\n" +
                 "2. Cost of Purchase\n" +
                 "3. Date Added\n");
         String input = App.userIn.readLine();
-        
+
         switch (input) {
         case "1":
             sortBy = 3;
@@ -267,6 +268,6 @@ public class UserEntries {
 			String guilt = records[j][3];
 			String category = records[j][4];
 			System.out.format("%s. Amount = £%s, Date = %s, Guilt Level = %s, Category = %s\n", id, amount, date, guilt, category);
-		}      
+		}
 	}
 }
