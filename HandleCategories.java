@@ -63,7 +63,8 @@ public class HandleCategories {
         }
 
         if(!existsCategory(category)){
-            RetrieveAndStore.sqlExecute("INSERT INTO tblCategory (CategoryName, Expenditure) VALUES ('" + category + "', 0 )");
+            RetrieveAndStore.sqlExecute("INSERT INTO tblCategory (CategoryID, CategoryName, Expenditure) VALUES" +
+                    " (" + (RetrieveAndStore.maxID("tblCategory", "CategoryID") + 1)  + ", '" + category + "', 0 )");
             System.out.print("Successfully added the category");
         } else{
         	System.out.println("This category already exists.");

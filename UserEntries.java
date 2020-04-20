@@ -95,8 +95,9 @@ public class UserEntries {
 				}
 			}
 
-			RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseAmount, PurchaseDate, GuiltyLevel, " +
-					"Category) VALUES (" + amount + ", '" + date.getDate() + "', " + guilt + ",'" + category + "')");
+			RetrieveAndStore.sqlExecute("INSERT INTO tblPurchases (PurchaseID, PurchaseAmount, PurchaseDate, GuiltyLevel, " +
+					"Category) VALUES ("+ (RetrieveAndStore.maxID("tblPurchases", "PurchaseID") + 1) + ", " +
+					amount + ", '" + date.getDate() + "', " + guilt + ",'" + category + "')");
             RetrieveAndStore.sqlExecute("UPDATE tblCategory SET Expenditure = Expenditure +" + amount + " WHERE CategoryName = '" + category + "'");
             RetrieveAndStore.rowNumberUpdater("tblPurchases","PurchaseID");
 		} else{
