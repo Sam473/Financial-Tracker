@@ -88,7 +88,7 @@ public class RetrieveAndStore {
 	 */
 	public static void rowNumberUpdater(String tableName, String columnName){
 		ResultSet rs = RetrieveAndStore.readAllRecords(tableName);
-		int i = 0;
+		int i = 1;
 		try {
 			while(rs.next()){ // Loop through all pools in table
 				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %d WHERE %s = %d;", tableName, columnName, i, columnName, rs.getInt(columnName)));

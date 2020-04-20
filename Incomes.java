@@ -147,14 +147,8 @@ public class Incomes {
                         }
                     }
                     System.out.println("How much do you get per hour?");
-                    customPay = Float.parseFloat(App.userIn.readLine());
-                    monthlySalary = ((customPay*hoursPerWeek*52)/12); //work out hours worked per week then convert to monthly
-                    break;
-                case "d":
-                case "D":
-                    System.out.println("How much do you get per day?");
                     amountString = App.userIn.readLine();
-                    if(!Validation.isDouble(amountString) || (customPay = Double.parseDouble(amountString)) <= 0) {
+                    if(!Validation.isDouble(amountString) || Double.parseDouble(amountString) <= 0) {
                         System.out.println("Invalid amount given\n\n");
                         return;
                     }
@@ -166,7 +160,26 @@ public class Incomes {
                             return;
                         }
                     }
-                    customPay = Float.parseFloat(App.userIn.readLine());
+                    customPay = Float.parseFloat(amountString);
+                    monthlySalary = ((customPay*hoursPerWeek*52)/12); //work out hours worked per week then convert to monthly
+                    break;
+                case "d":
+                case "D":
+                    System.out.println("How much do you get per day?");
+                    amountString = App.userIn.readLine();
+                    if(!Validation.isDouble(amountString) || Double.parseDouble(amountString) <= 0) {
+                        System.out.println("Invalid amount given\n\n");
+                        return;
+                    }
+
+                    if (amountString.contains(".")) {
+                        int decimalPos = amountString.indexOf('.');
+                        if ((amountString.length() - 1) - decimalPos > 2) {
+                            System.out.println("Invalid number, too precise\n\n");
+                            return;
+                        }
+                    }
+                    customPay = Float.parseFloat(amountString);
                     monthlySalary = (customPay*5*52)/12; //5 days per week then same as weekly pay
                     break;
                 case "w":
@@ -230,9 +243,11 @@ public class Incomes {
         }
 
         //Add the record to the database
-		RetrieveAndStore.sqlExecute("INSERT INTO tblIncomes (MonthlySalary) VALUES (" + monthlySalary + ")");
+		RetrieveAndStore.sqlExecute("INSERT INTO tblIncomes (IncomeID, IncomeName, MonthlySalary) VALUES (" +
+                (RetrieveAndStore.maxID("tblIncomes", "IncomeID") + 1) + ", '" +
+                name + "', " + monthlySalary + ")");
         RetrieveAndStore.rowNumberUpdater("tblIncomes", "IncomeID");
-        RetrieveAndStore.rowNumberUpdater("tblIncomes","IncomeID");
+        RetrieveAndStore.rowNumberUpdater("tblIncomes", "IncomeID");
     }
 
     private void editIncome() throws SQLException, IOException {
@@ -245,7 +260,7 @@ public class Incomes {
         String idString = App.userIn.readLine();
         if(!(Validation.isInteger(idString))) return;
         int id = Integer.parseInt(idString);
-        if(!Validation.isRangeValid(0,RetrieveAndStore.maxID("tblIncomes","IncomeID"),id)) return;
+        if(!Validation.isRangeValid(1,RetrieveAndStore.maxID("tblIncomes","IncomeID"),id)) return;
         System.out.println("Great, and which field would you like to update?");
         ResultSetMetaData rsmd = rs.getMetaData();
         for (int i = 2; i <= rsmd.getColumnCount(); i++) { // Loop through all columns and print column name
@@ -278,10 +293,18 @@ public class Incomes {
             case 3:
                 double newAmount;
                 while(!cont){
-                    if(!(Validation.isDouble(newValueString))){
+                    if(!(Validation.isDouble(newValueString)) || Double.parseDouble(newValueString) <= 0){
                         System.out.println("Invalid amount, try another:");
                         newValueString = App.userIn.readLine();
                     } else {
+                        if(newValueString.contains(".")){
+                            int decimalPos = newValueString.indexOf('.');
+                            if ((newValueString.length() - 1) - decimalPos > 2) {
+                                System.out.println("Invalid number, too precise, try again:");
+                                newValueString = App.userIn.readLine();
+                                continue;
+                            }
+                        }
                         newAmount = Double.parseDouble(newValueString);
                         cont = true;
                         RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %.2f WHERE %s = %d","tblIncomes",columnName,

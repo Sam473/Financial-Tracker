@@ -236,7 +236,7 @@ public class Savings {
 				}
 
 				// print the results
-				System.out.format("%d: %s\nPool: £%.2f/£%.2f @ £%.2fpm\n%s - %s\n%s\n\n", id+1, name, currentSavings, goal, contribution,
+				System.out.format("%d: %s\nPool: £%.2f/£%.2f @ £%.2fpm\n%s - %s\n%s\n\n", id, name, currentSavings, goal, contribution,
 						dateCreated, dateLimit, projection);
 			}
 		} catch (SQLException e) {
@@ -254,9 +254,9 @@ public class Savings {
 		System.out.println("Please enter the ID number of the Pool you would like to update:");
 		String poolIDString = App.userIn.readLine();
 		if (!Validation.isInteger(poolIDString)) return;
-		int poolID = Integer.parseInt(poolIDString) - 1; // Must be less than one as row ID's start from 0
+		int poolID = Integer.parseInt(poolIDString); // Must be less than one as row ID's start from 0 (not anymore they don't)
 		// Check it is a valid ID
-		if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
 		ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
 		try {
 			ResultSetMetaData rsmd = rs.getMetaData();
@@ -274,7 +274,14 @@ public class Savings {
 
 			if (3<=columnInt && columnInt<=5) { // If they choose a column which takes an integer (e.g. Savings goal) - Double
 				String newValueString = App.userIn.readLine();
-				if (!Validation.isDouble(newValueString)) return;
+				if (!Validation.isDouble(newValueString) || Double.parseDouble(newValueString) <= 0) return;
+				if(newValueString.contains(".")){
+					int decimalPos = newValueString.indexOf('.');
+					if ((newValueString.length() - 1) - decimalPos > 2) {
+						System.out.println("Invalid number, too precise");
+						return;
+					}
+				}
 				double newValue = Double.parseDouble(newValueString);
 				RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %.2f WHERE %s = %d", "tblSavings",
 						columnName, newValue, "ID", poolID));
@@ -328,8 +335,8 @@ public class Savings {
 		System.out.println("Please enter the ID number of the Pool you would like to delete:");
 		String poolIDString = App.userIn.readLine();
 		if (!Validation.isInteger(poolIDString)) return;
-		int poolID = Integer.parseInt(poolIDString)-1;
-		if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+		int poolID = Integer.parseInt(poolIDString);
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
 		RetrieveAndStore.sqlExecute(String.format("DELETE FROM %s WHERE %s = %d", "tblSavings", "ID", poolID));
 		RetrieveAndStore.rowNumberUpdater("tblSavings", "ID");
 		System.out.println("Done, its deleted, gone forever, turned to smithereens, never to be seen again...\n\n");

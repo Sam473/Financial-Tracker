@@ -118,7 +118,8 @@ public class RecurringOutgoings {
         System.out.println("What is the name of this payment?");
         String name = App.userIn.readLine();
 
-        RetrieveAndStore.sqlExecute("INSERT INTO tblOutgoings (OutgoingName, OutgoingAmount) VALUES ('" + name + "', "
+        RetrieveAndStore.sqlExecute("INSERT INTO tblOutgoings (OutgoingID, OutgoingName, OutgoingAmount) VALUES" +
+                " (" + (RetrieveAndStore.maxID("tblOutgoings", "OutgoingID") + 1) + ", '" + name + "', "
 				+ amount + ")");
         System.out.println("Successfully added new outgoing\n");
         RetrieveAndStore.rowNumberUpdater("tblOutgoings","OutgoingID");
@@ -135,7 +136,7 @@ public class RecurringOutgoings {
         String idString = App.userIn.readLine();
         if(!(Validation.isInteger(idString))) return;
         int id = Integer.parseInt(idString);
-        if(!Validation.isRangeValid(0,RetrieveAndStore.maxID("tblOutgoings","OutgoingID"),id)) return;
+        if(!Validation.isRangeValid(1,RetrieveAndStore.maxID("tblOutgoings","OutgoingID"),id)) return;
         System.out.println("Great, and which field would you like to update?");
         ResultSetMetaData rsmd = rs.getMetaData();
         for (int i = 2; i <= rsmd.getColumnCount(); i++) { // Loop through all columns and print column name
@@ -168,10 +169,18 @@ public class RecurringOutgoings {
             case 3:
                 double newAmount;
                 while(!cont){
-                    if(!(Validation.isDouble(newValueString))){
+                    if(!(Validation.isDouble(newValueString)) || Double.parseDouble(newValueString) <= 0){
                         System.out.println("Invalid amount, try another:");
                         newValueString = App.userIn.readLine();
                     } else {
+                        if(newValueString.contains(".")){
+                            int decimalPos = newValueString.indexOf('.');
+                            if ((newValueString.length() - 1) - decimalPos > 2) {
+                                System.out.println("Invalid number, too precise, try again:");
+                                newValueString = App.userIn.readLine();
+                                continue;
+                            }
+                        }
                         newAmount = Double.parseDouble(newValueString);
                         cont = true;
                         RetrieveAndStore.sqlExecute(String.format("UPDATE %s SET %s = %.2f WHERE %s = %d","tblOutgoings",columnName,
