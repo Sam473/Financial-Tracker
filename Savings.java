@@ -256,7 +256,7 @@ public class Savings {
 		if (!Validation.isInteger(poolIDString)) return;
 		int poolID = Integer.parseInt(poolIDString); // Must be less than one as row ID's start from 0 (not anymore they don't)
 		// Check it is a valid ID
-		if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
 		ResultSet rs = RetrieveAndStore.readAllRecords("tblSavings");
 		try {
 			ResultSetMetaData rsmd = rs.getMetaData();
@@ -336,7 +336,7 @@ public class Savings {
 		String poolIDString = App.userIn.readLine();
 		if (!Validation.isInteger(poolIDString)) return;
 		int poolID = Integer.parseInt(poolIDString);
-		if (!Validation.isRangeValid(0, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
+		if (!Validation.isRangeValid(1, RetrieveAndStore.maxID("tblSavings", "ID"), poolID)) return;
 		RetrieveAndStore.sqlExecute(String.format("DELETE FROM %s WHERE %s = %d", "tblSavings", "ID", poolID));
 		RetrieveAndStore.rowNumberUpdater("tblSavings", "ID");
 		System.out.println("Done, its deleted, gone forever, turned to smithereens, never to be seen again...\n\n");

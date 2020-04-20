@@ -260,7 +260,7 @@ public class Incomes {
         String idString = App.userIn.readLine();
         if(!(Validation.isInteger(idString))) return;
         int id = Integer.parseInt(idString);
-        if(!Validation.isRangeValid(0,RetrieveAndStore.maxID("tblIncomes","IncomeID"),id)) return;
+        if(!Validation.isRangeValid(1,RetrieveAndStore.maxID("tblIncomes","IncomeID"),id)) return;
         System.out.println("Great, and which field would you like to update?");
         ResultSetMetaData rsmd = rs.getMetaData();
         for (int i = 2; i <= rsmd.getColumnCount(); i++) { // Loop through all columns and print column name
